@@ -28,7 +28,7 @@
 #'  Returns a vector of NAs if any Stabilizing effect is higher than 1.
 #'  
 #' @references
-#'   * Segrestin, J., Götzenberger, L., Valencia, E., de Bello, F., & Lepš, J. (2024). A unified framework for partitioning the drivers of stability of ecological communities. Global Ecology and Biogeography, 33(5), e13828.
+#' - Segrestin, J., Götzenberger, L., Valencia, E., de Bello, F., & Lepš, J. (2024). A unified framework for partitioning the drivers of stability of ecological communities. Global Ecology and Biogeography, 33(5), e13828.
 #' 
 #' @examples
 #' 

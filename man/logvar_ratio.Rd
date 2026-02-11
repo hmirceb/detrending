@@ -11,7 +11,7 @@ logvar_ratio(x, term = "var", ...)
 
 \item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
 
-\item{time_col}{Character. Name of the column with time variable. Optional and assumes that rows are in order  by default.}
+\item{time_col}{Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.}
 }
 \description{
 This function lets you estimate the synchrony index using a detrended version of variances based on Hill's 2 and 3 terms local quadratic variance.

@@ -9,7 +9,7 @@ cv_term(x, term = "var")
 \arguments{
 \item{x}{A numeric vector}
 
-\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariane), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
+\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
 }
 \description{
 Calculate the coefficient of variation (CV) of a variable

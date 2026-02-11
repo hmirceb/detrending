@@ -1,5 +1,66 @@
 # Functions to calculate community (a)synchrony
 
+#' Psi synchrony index
+#' 
+#' Estimate \eqn{\psi}, 
+#' 
+#' @usage psi_segrestin(x, term = "var", ...)
+#'
+#' @param x A data.frame. A community matrix of species abundance with years as rows and species as columns. 
+#' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
+#' @param time_col Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.
+#' 
+#' @details
+#' 
+#' \eqn{\psi} is estimated as:
+#' 
+#' \deqn{\psi = \sqrt{ \phi } ^ \alpha = \left( \dfrac{ \sigma_{x_{T}} }{ \sum_{i=1}^{S}{\sigma_{x_{i}}} } \right) ^ \alpha } 
+#' 
+#' Where \eqn{\alpha} is a scaling factor estimated as:
+#' 
+#' \deqn{\alpha = \dfrac{ log(1 / 2) }{ log( \sum_{i=1}^{S}{\sigma_{x_{i}}^2} / (\sum_{i=1}^{S}{\sigma_{x_{i}}})^2 ) } } 
+#' 
+#' Where \eqn{\sigma_{x}} is the standard deviation of a vector of abundances \eqn{x}, \eqn{S} is the number of species in the community, \eqn{x_{i}} is the abundance of species \eqn{i} across time steps, \eqn{x_{T}} is the sum of species abundances for each time step.
+#' 
+#' @returns A single numeric value
+#' 
+#' @references
+#' - Segrestin, J., Götzenberger, L., Valencia, E., de Bello, F., & Lepš, J. (2024). A unified framework for partitioning the drivers of stability of ecological communities. Global Ecology and Biogeography, 33(5), e13828.
+#' 
+#' @author Jules Segrestin, \email{jsegrestin@@gmail.com}
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#' 
+#' @export
+psi_segrestin <- function(x, term = "var", time_col = "time"){
+  # Match variance function
+  var_func <- switch(
+    term,
+    var = var,
+    two = var_t2,
+    three = var_t3
+  )
+  
+  # Check if a time column was specified for detrending methods
+  x <- check_time(x = x, time_col = time_col, term = term)
+  
+  # Set NAs as 0 and remove species with 0 abundance
+  x <- remove_empty_sps(x = x, time_col = time_col)
+  
+  varsum <- var_func(rowSums(x)) # variance of sum of abundances
+  sdsum <- sqrt(varsum) # Square root of sum of variances (SD). Equivalent to SD of the sum of yearly abundances (whole community)
+  
+  # Variance of each species
+  vari <- apply(X = x, MARGIN = 2, FUN = var_func) 
+  sumsd <- sum(sqrt(vari))
+  
+  rootPhi <- sdsum / sumsd # Ratio between SD of whole community vs sum of individual SDs
+  sumvar <- sum(vari) # Sum of individual variances
+  alpha <- log10(1/2) / (log10(sumvar/(sumsd^2))) # Scaling coefficient (eq. 7)
+  Psi <- rootPhi^alpha # Asynchrony effect
+  
+  return(Psi)
+}
+
 #' Phi synchrony index
 #' 
 #' This function estimates Loreau & Mazancourts 2008 Phi synchrony index using standard and detrended versions of variances based on Hill's 2 and 3 terms local quadratic variance. 
@@ -17,12 +78,13 @@
 #' @export
 phi_loreau <- function(x, term = "var", time_col = "time") {
   
-  # Match argument for variance function to use
-  # Table of options
-  options <- data.frame(term = c("var", "two", "three", "linear"),
-                        var = c("var", "var_t2", "var_t3", "var_linear"))
-  # Get choice
-  var_func <- match.fun(options[options$term == term,]$var)
+  # Match variance function
+  var_func <- switch(
+    term,
+    var = var,
+    two = var_t2,
+    three = var_t3
+  )
   
   # Check if a time column was specified for detrending methods
   x <- check_time(x = x, time_col = time_col, term = term)
@@ -57,12 +119,13 @@ phi_loreau <- function(x, term = "var", time_col = "time") {
 #' @export
 eta_gross <- function(x, term = "var", time_col = "time", weighted = FALSE) {
   
-  # Match argument for variance function to use
-  # Table of options
-  options <- data.frame(term = c("var", "two", "three", "linear"),
-                        var = c("var", "var_t2", "var_t3", "var_linear"))
-  # Get choice
-  var_func <- match.fun(options[options$term == term,]$var)
+  # Match variance function
+  var_func <- switch(
+    term,
+    var = var,
+    two = var_t2,
+    three = var_t3
+  )
   
   # Check if a time column was specified for detrending methods
   x <- check_time(x = x, time_col = time_col, term = term)
@@ -106,12 +169,13 @@ eta_gross <- function(x, term = "var", time_col = "time", weighted = FALSE) {
 #' @export
 logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
   
-  # Match argument for variance function to use
-  # Table of options
-  options <- data.frame(term = c("var", "two", "three", "linear"),
-                        var = c("var", "var_t2", "var_t3", "var_linear"))
-  # Get choice
-  var_func <- match.fun(options[options$term == term,]$var)
+  # Match variance function
+  var_func <- switch(
+    term,
+    var = var,
+    two = var_t2,
+    three = var_t3
+  )
   
   # Check if a time column was specified for detrending methods
   x <- check_time(x = x, time_col = time_col, term = term)
@@ -186,11 +250,18 @@ sync_term <- function(x, index = c("phi", "eta", "logvar"),  term = "var", time_
   if(sum(index %in% c("phi", "eta", "logvar")) == 0) {
     stop("Please choose an appropriate synchrony index")
   }
-  
   # Match arguments with multiple synchrony functions
   options <- data.frame(index = c("phi", "eta", "logvar"),
                         fun = c("phi_loreau", "eta_gross", "logvar_ratio"))
   index_func <- options[options$index %in% index,]$fun
+  
+  # Match variance function
+  var_func <- switch(
+    term,
+    var = var,
+    two = var_t2,
+    three = var_t3
+  )
   
   # Check if a time column was specified for detrending methods
   x <- tryCatch(

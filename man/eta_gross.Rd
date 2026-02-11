@@ -9,9 +9,9 @@ eta_gross(x, term = "var", ...)
 \arguments{
 \item{x}{A data.frame. A community matrix of species abundance with years as rows and species as columns.}
 
-\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".#' @param weighted Boolean. Weight index by species relative abundances. Default FALSE.}
+\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
 
-\item{time_col}{Character. Name of the column with time variable. Optional and assumes that rows are in order  by default.}
+\item{time_col}{Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.}
 
 \item{weighted}{Boolean. Weight the contribution of each species by its average abundance in the community. Default FALSE.}
 }

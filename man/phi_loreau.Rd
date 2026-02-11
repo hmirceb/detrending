@@ -2,22 +2,22 @@
 % Please edit documentation in R/synchrony.R
 \name{phi_loreau}
 \alias{phi_loreau}
-\title{Phi synchrony index  synchrony index phi}
+\title{Phi synchrony index}
 \usage{
 phi_loreau(x, term = "var", ...)
 }
 \arguments{
 \item{x}{A community matrix of species abundance with years as rows and species as columns.}
 
-\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".#'}
+\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
 
-\item{time_col}{Character. Name of the column with time variable. Optional and assumes that rows are in order  by default.}
+\item{time_col}{Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.}
 }
 \value{
 A single
 }
 \description{
-This function estimates Loreau & Mazancourts 2008 Phi synchrony index using a detrended version of variances based on Hill's 2 and 3 terms local quadratic variance.
+This function estimates Loreau & Mazancourts 2008 Phi synchrony index using standard and detrended versions of variances based on Hill's 2 and 3 terms local quadratic variance.
 }
 \references{
 \itemize{

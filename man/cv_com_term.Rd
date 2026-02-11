@@ -11,7 +11,7 @@ cv_com_term(x, total = TRUE, weighted = FALSE, term = "var")
 
 \item{weighted}{Boolean. Weight the CV of each population by its average relative abundance per species across years.}
 
-\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariane), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
+\item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
 }
 \description{
 CV of a community

@@ -4,7 +4,7 @@
 \alias{check_time}
 \title{Check order of observations}
 \usage{
-check_time(x, time_col = "time", term = NULL)
+check_time(x, time_col = NULL, term = NULL)
 }
 \arguments{
 \item{x}{}

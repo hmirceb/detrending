@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{jenfish}
 \alias{jenfish}
-\title{Jennings–Fischer formula estimates a combined value of plant cover assuming overlap between plants in the stratum.}
+\title{Jennings–Fischer formula estimates a combined value of plant cover assuming overlap between plants.}
 \usage{
 jenfish(x, perc = FALSE)
 }
@@ -12,7 +12,7 @@ jenfish(x, perc = FALSE)
 \item{perc}{Boolean. If the cover values are expressed as percentages or proportions. Default FALSE.}
 }
 \description{
-Jennings–Fischer formula estimates a combined value of plant cover assuming overlap between plants in the stratum.
+Jennings–Fischer formula estimates a combined value of plant cover assuming overlap between plants.
 }
 \references{
 \itemize{

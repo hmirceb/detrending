@@ -12,7 +12,7 @@ clean_community(
   taxa_col = "species",
   abundance_col = "abundance",
   na_zero = TRUE,
-  filter = TRUE,
+  filter_transient = TRUE,
   empty_years = FALSE,
   threshold = 0.3
 )
@@ -32,11 +32,11 @@ clean_community(
 
 \item{na_zero}{Boolean. Replace missing values (NAs) with zeros (0). Default TRUE.}
 
-\item{filter}{Boolean. Filter data. Default TRUE.}
-
 \item{empty_years}{Boolean. Remove empty years. Default FALSE.}
 
 \item{threshold}{Numeric. Minimum proportion (between 0 and 1) of time points with valid data to keep a species. Default 0.3.}
+
+\item{filter}{Boolean. Filter data. Default TRUE.}
 }
 \description{
 Clean community data to use in other functions
