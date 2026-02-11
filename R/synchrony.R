@@ -1,14 +1,14 @@
 # Functions to calculate community (a)synchrony
 
-#' Phi synchrony index  synchrony index phi
+#' Phi synchrony index
 #' 
-#' This function estimates Loreau & Mazancourts 2008 Phi synchrony index using a detrended version of variances based on Hill's 2 and 3 terms local quadratic variance. 
+#' This function estimates Loreau & Mazancourts 2008 Phi synchrony index using standard and detrended versions of variances based on Hill's 2 and 3 terms local quadratic variance. 
 #' 
 #' @usage phi_loreau(x, term = "var", ...)
 #' 
 #' @param x A community matrix of species abundance with years as rows and species as columns. 
-#' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".#' 
-#' @param time_col Character. Name of the column with time variable. Optional and assumes that rows are in order  by default.
+#' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
+#' @param time_col Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.
 #' @returns A single
 #'
 #' @references
@@ -43,8 +43,9 @@ phi_loreau <- function(x, term = "var", time_col = "time") {
 #' @usage eta_gross(x, term = "var", ...)
 #'
 #' @param x A data.frame. A community matrix of species abundance with years as rows and species as columns. 
-#' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".#' @param weighted Boolean. Weight index by species relative abundances. Default FALSE.
-#' @param time_col Character. Name of the column with time variable. Optional and assumes that rows are in order  by default.
+#' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
+#' @param weighted Boolean. Weight index by species relative abundances. Default FALSE.
+#' @param time_col Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.
 #' @param weighted Boolean. Weight the contribution of each species by its average abundance in the community. Default FALSE.
 #' 
 #' @returns
@@ -97,12 +98,11 @@ eta_gross <- function(x, term = "var", time_col = "time", weighted = FALSE) {
 #' 
 #' @param x A data.frame. A community matrix of species abundance with years as rows and species as columns. 
 #' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
-#' @param time_col Character. Name of the column with time variable. Optional and assumes that rows are in order  by default.
+#' @param time_col Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.
 #' 
 #' @references
 #' - Lepš, J., Májeková, M., Vítová, A., Doležal, J., & de Bello, F. (2018). Stabilizing effects in temporal fluctuations: Management, traits, and species richness in high‐diversity communities. Ecology, 99(2), 360-371.
 #' 
-#' @examples
 #' @export
 logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
   
@@ -179,7 +179,6 @@ logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
 #' - Blüthgen, N., Simons, N. K., Jung, K., Prati, D., Renner, S. C., Boch, S., ... & Gossner, M. M. (2016). Land use imperils plant and animal community stability through changes in asynchrony rather than diversity. Nature Communications, 7(1), 10697.
 #' - Lepš, J., Májeková, M., Vítová, A., Doležal, J., & de Bello, F. (2018). Stabilizing effects in temporal fluctuations: Management, traits, and species richness in high‐diversity communities. Ecology, 99(2), 360-371.
 #' 
-#' @examples
 #' @export
 sync_term <- function(x, index = c("phi", "eta", "logvar"),  term = "var", time_col = "time", weighted = FALSE) {
   
