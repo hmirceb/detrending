@@ -137,7 +137,15 @@ eta_gross <- function(x, term = "var", time_col = "time", weighted = FALSE) {
   corrs <- c() # Vector to store correlations
   for (i in seq_len(ncol(x))) { # Loop over columns
     sp_ab <- x[,i] # Abundance of focal species
-    com_ab <- rowSums(x[,-i]) # Sum of all other species
+    
+    # Sum of all other species
+    # use appropriate sum if there are only 2 species in the community 
+    if ( ncol(x) == 2) {
+      com_ab <- x[,-i]
+    } else {
+      com_ab <- rowSums(x[,-i])
+    }
+    # Check weighted argument
     if( isTRUE(weighted) ){
       # Relative abundance of species i across all years
       w <- colSums(x)[i] / sum(colSums(x))

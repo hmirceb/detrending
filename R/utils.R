@@ -26,7 +26,8 @@ check_time <- function(x, time_col = "time", term = NULL, rm = TRUE) {
   }
   
   # Reorder according to time
-  x <- x[with(x, order(x[, time_col])),]
+  #x <- x[with(x, order(x[, time_col])),]
+  x <- x[order(x[[time_col]]), ]
   
   if ( isTRUE(rm) ) {
     # Remove time column once df is ordered
