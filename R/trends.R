@@ -29,11 +29,11 @@ trend_dennis  <- function(x, time = NULL){
   # Average log ratios
   y <- d_n / d_t
   # Lm for log ratios and corrected time
-  t_m <- lm(y~0+d_t)
+  t_m <- stats::lm(y~0+d_t)
   # Stochastic variance of growth rates
-  stoc_v <- sigma(t_m)^2
+  stoc_v <- stats::sigma(t_m)^2
   # Return mean growth rate, variance and confidence interval
-  res <- c(coef(t_m), stoc_v, confint(t_m))
+  res <- c(stats::coef(t_m), stoc_v, stats::confint(t_m))
   names(res) <- c("trend", "var", "l95", "u95")
   return(res)
 }
@@ -64,9 +64,9 @@ trend_loglinear  <- function(x, time = NULL){
   # log transform
   d_n <- log(x)
   # linear regression
-  t_m <- lm(d_n~d_t)
+  t_m <- stats::lm(d_n~d_t)
   # Return slope and confidence interval
-  res <- c(coef(t_m)[2], confint(t_m)[2,])
+  res <- c(stats::coef(t_m)[2], stats::confint(t_m)[2,])
   names(res) <- c("trend", "l95", "u95")
   
   return(res)

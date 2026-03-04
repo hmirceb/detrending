@@ -1,9 +1,17 @@
 Package: detrending
-Title: What the Package Does (One Line, Title Case)
+Title: A Suite of Tools for Estimating Community Stability and its components
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: c(
+    person("Héctor", "Miranda-Cebrián", email = "hectorm94@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0340-8373")),
+    person("Jules", "Segrestin", email = "", role = "aut"),
+    person("Jan", "Leps", email = "", role = c("cph", "fnd")),
+    person("Francesco", "de Bello", email = "", role = c("cph", "fnd")),
+    person("Ales", "Lisner", email = "", role = c("cph", "fnd")),
+    person("Lars", "Gotztenberg", email = "", role = c("cph", "fnd")),
+    person("Enrique", "Valencia", email = "", role = c("cph", "fnd")),
+    person("Clara", "Gracia", email = "", role = c("cph", "fnd"))
+    )
+Description: A suite of tools for estimating community stability and its components.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

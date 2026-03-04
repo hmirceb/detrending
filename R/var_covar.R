@@ -67,9 +67,9 @@ var_t3 <- function(x) {
 #' @export
 var_linear <- function(x) {
   y <- 1:length(x)
-  mod <- lm(x ~ y)
-  det_x <- resid(mod)
-  return(var(det_x))
+  mod <- stats::lm(x ~ y)
+  det_x <- stats::resid(mod)
+  return( stats::var(det_x) )
 }
 
 #' Covariance between two variables using variance or Hill's 2 and 3 term variance

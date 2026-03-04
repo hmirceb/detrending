@@ -51,7 +51,7 @@ var_mv <- function(x, d = c("euclidean", "chord")){
     data_merged <- chord_transform(data_merged)
   }
   # Compute distances
-  dist_mat <- as.matrix(dist(data_merged))
+  dist_mat <- as.matrix( stats::dist(data_merged) )
   dist_eu <- dist_mat[-1,1]
   # First column is distances between average community and each year (remove first obs)
   sum_sq <- sum(dist_eu^2)
@@ -87,7 +87,7 @@ var_t2mv <- function(x, d = c("euclidean", "chord")){
     x <- chord_transform(x)
   }
   # Compute distances
-  dis <- as.matrix(dist(x))
+  dis <- as.matrix( stats::dist(x) )
   # Get superdiagonal (distance between consecutive years)
   dis <- dis[row(dis) == col(dis) + 1]
   # TTQVmv
