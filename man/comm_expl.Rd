@@ -9,7 +9,8 @@ comm_expl(
   by_timestep = FALSE,
   total = c("average", "overall"),
   community_col = "comm",
-  time_col = "time"
+  time_col = "time",
+  trend = FALSE
 )
 }
 \arguments{

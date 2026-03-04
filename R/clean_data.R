@@ -8,9 +8,7 @@
 #' @param empty_years Boolean. Remove empty years. Default FALSE.
 #' @param threshold Numeric. Minimum proportion (between 0 and 1) of time points with valid data to keep a species. Default 0.3.
 #'
-#' @returns
-#'
-#' @examples
+#' @returns A data.frame with the community data in wide format.
 #' 
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
@@ -134,9 +132,7 @@ clean_community_wide <- function(x,
 #' @param taxa_col Character. Name of column with taxa names. Default "species".
 #' @param abundance_col Character. Name of column with abundance values. Default "abundance".
 #' 
-#' @returns
-#'
-#' @examples
+#' @returns A data.frame with the community data in long format.
 #' 
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
@@ -227,9 +223,7 @@ clean_community_long <- function(x,
 #' @param empty_years Boolean. Remove empty years. Default FALSE.
 #' @param threshold Numeric. Minimum proportion (between 0 and 1) of time points with valid data to keep a species. Default 0.3.
 #'
-#' @returns
-#'
-#' @examples
+#' @returns A data.frame with the community data ready to use in other functions.
 #' 
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
@@ -288,9 +282,7 @@ clean_community <- function(x,
 #' @param time_col Character. Name of column with time variable. Default "time".
 #' @param taxa_col Character. Name of column with taxa names. Default "species".
 #'
-#' @returns
-#' 
-#' @examples
+#' @returns A data.frame with the community data ready to use by the `metacomstab_term()` function.
 #' 
 #' @author @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 

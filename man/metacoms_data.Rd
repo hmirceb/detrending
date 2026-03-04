@@ -20,6 +20,9 @@ metacoms_data(
 
 \item{taxa_col}{Character. Name of column with taxa names. Default "species".}
 }
+\value{
+A data.frame with the community data ready to use by the \code{metacomstab_term()} function.
+}
 \description{
 Prepare metacommunity data
 }

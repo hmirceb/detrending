@@ -23,6 +23,9 @@ clean_community_long(
 
 \item{abundance_col}{Character. Name of column with abundance values. Default "abundance".}
 }
+\value{
+A data.frame with the community data in long format.
+}
 \description{
 Clean community data in long format
 }

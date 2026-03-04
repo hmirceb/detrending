@@ -72,7 +72,8 @@ comm_expl <- function(x,
                      by_timestep = FALSE,
                      total = c("average", "overall"),
                      community_col = "comm",
-                     time_col = "time"){
+                     time_col = "time",
+                     trend = FALSE){
   
   # Split data by timestep
   if( isFALSE(by_timestep) ){

@@ -29,6 +29,9 @@ clean_community_wide(
 
 \item{filter}{Boolean. Filter data. Default TRUE.}
 }
+\value{
+A data.frame with the community data in wide format.
+}
 \description{
 Clean community data in wide format
 }

@@ -12,10 +12,9 @@
 #' @param trend_sd Numeric. Standard deviation of the trend.
 #' @param bimodal_trend 
 #'
-#' @returns
+#' @returns A named list containing a data.frame with the simulated data, the true mean trends of each simulated species and the parameters used to simulate the data.
+#' 
 #' @export
-#'
-#' @examples
 sim_mvcomm <- function(n_sp = 10,
                     years = 25,
                     tot_abu = 200 * n_sp,
@@ -78,7 +77,18 @@ sim_mvcomm <- function(n_sp = 10,
   
   # Results into list
   res <- list(sim_data = as.data.frame(simcom),
-              true_trend = exp(colMeans(apply(log(simcom), 2, diff))))
+              true_trend = exp(colMeans(apply(log(simcom), 2, diff))),
+              params = c(n_sp = n_sp,
+                         years = years,
+                         tot_abu = tot_abu,
+                         power = power,
+                         bound_pos = bound_pos,
+                         corr = corr,
+                         p = p,
+                         switch_trend = switch_trend,
+                         trend_mean = trend_mean,
+                         trend_sd = trend_sd,
+                         bimodal_trend = bimodal_trend))
   
   return(res)
 }

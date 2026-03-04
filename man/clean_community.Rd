@@ -38,6 +38,9 @@ clean_community(
 
 \item{filter}{Boolean. Filter data. Default TRUE.}
 }
+\value{
+A data.frame with the community data ready to use in other functions.
+}
 \description{
 Clean community data to use in other functions
 }
