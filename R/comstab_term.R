@@ -8,13 +8,13 @@
 #' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
 #' @param time_col Character. Name of the column with time variable. Optional with default "time".
 #' 
-#' @details The analytic framework is described in details in Segrestin *et al.* (2024).
+#' @details The analytic framework is described in detail in Segrestin *et al.* (2024).
 #' In short, the partitioning relies on the following equation: \deqn{CV_{com} = CV_e \Delta \Psi \omega} 
 #' where \eqn{CV_{com}} is the community coefficient of variation (reciprocal of community stability), 
 #' \eqn{CV_e} is the expected community CV when controlling for the dominance structure and species temporal synchrony,
 #' \eqn{ \Delta} is the dominance effect, \eqn{ \Psi} is the asynchrony effect, and \eqn{ \omega} is the averaging effect.
 #' 
-#' @returns An object of class `'comstab'`, a list of named vectors containing the following components:
+#' @returns An object of class `comstab`, a list of named vectors containing the following components:
 #'  * `'CVs'` a named vector of calculated coefficient of variations. `CVe` is the CV of an average species,
 #'  `CVtilde` is the mean of species CVs weighted by their relative abundances, `CVa` is the expected community CV if 
 #'   the community was stabilized by species asynchrony only, and `CVc` is the observed community CV.
@@ -161,7 +161,7 @@ comstab_term = function(x,
 }
 
 #' @export
-print.comstab <- function(x){
+print.comstab <- function(x, ...){
   cat("\nPartitionning of the community temporal variability (CV)")
   cat("\n")
   cat(paste0("Community CV = ", round(x$CVs["CVc"], 2),

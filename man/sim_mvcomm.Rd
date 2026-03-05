@@ -33,13 +33,13 @@ sim_mvcomm(
 
 \item{p}{Numeric. Dispersion value for a Dirichlet distribution bound between 0-1. Controls the evenness of the community with lower values indicating less dominance.}
 
+\item{switch_trend}{Boolean. Apply a trend to the data. Default FALSE.}
+
 \item{trend_mean}{Numeric. Mean of the trend.}
 
 \item{trend_sd}{Numeric. Standard deviation of the trend.}
 
 \item{bimodal_trend}{Boolean. If TRUE half of the species have negative trends and half positive.}
-
-\item{trend}{Boolean. Apply a trend to the data. Default FALSE.}
 }
 \value{
 A named list containing a data.frame with the simulated data, the true mean trends of each simulated species and the parameters used to simulate the data.

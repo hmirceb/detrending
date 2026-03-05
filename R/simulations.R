@@ -7,7 +7,7 @@
 #' @param bound_pos Boolean. Bound abundance values to be positive. Default TRUE.
 #' @param corr Numeric. Correlation between populations.
 #' @param p Numeric. Dispersion value for a Dirichlet distribution bound between 0-1. Controls the evenness of the community with lower values indicating less dominance.
-#' @param trend Boolean. Apply a trend to the data. Default FALSE.
+#' @param switch_trend Boolean. Apply a trend to the data. Default FALSE.
 #' @param trend_mean Numeric. Mean of the trend.
 #' @param trend_sd Numeric. Standard deviation of the trend.
 #' @param bimodal_trend Boolean. If TRUE half of the species have negative trends and half positive.
@@ -37,6 +37,7 @@ sim_mvcomm <- function(n_sp = 10,
   abu_matrix <- matrix(rep(mean_abu, times = years),
                        nrow = years, ncol = n_sp, byrow = TRUE)
   
+  # Simulate trends
   trend <- seq(-1, 1, length.out = years)
   trend_resp <- response(state = switch_trend,
                          n_sp = n_sp,
@@ -45,7 +46,7 @@ sim_mvcomm <- function(n_sp = 10,
                          bimodal = bimodal_trend,
                          comp = FALSE)
   
-  # Get Sd of abundances from TPL
+  # Get SD of abundances from TPL
   sd_abu <- sqrt(mean_abu ** power)
   
   # Variance-covariance matrix for MVN distribution
@@ -57,7 +58,7 @@ sim_mvcomm <- function(n_sp = 10,
   ss <- Lambda %*% t(Lambda) + Psi
   
   # Simulate random variation around mean cover for each species
-  # drawn from multivariate normal so species can correlate
+  # drawn from multivariate normal so species correlate
   simcom <- matrix(0, years, n_sp)
   for (j in 1:years) {
     abi <- MASS::mvrnorm(n = 1, 
@@ -94,10 +95,7 @@ sim_mvcomm <- function(n_sp = 10,
 }
 
 
-#' Simulate fluctuations in species abundances across time
-#'
-#' The arguments in \code{syngenr} are set to predefined default values, which can of course
-#' be customised, or sampled from parameter spaces.
+#' Simulate community with fluctuations in species abundances across time
 #'
 #' @param years Numeric. The length of the timeseries in years.
 #' @param n_sp Numeric. Number of species in the community.
@@ -165,8 +163,12 @@ syngenr <- function(years = 100,
                     bimodal_trend = FALSE,
                     bound_pos = TRUE) {
   
+  # Vector of mean abundances
   mean_abu <- tot_abu * geom_seq(max_rel_abu, n_sp)
+  # SD from TPL
   sd_abu <- sqrt(mean_abu ** power)
+  
+  # Simulate environmental trend
   env <- sample(seq(-0.5, 0.5, length.out = 3), years, replace = T)
   env_resp <- response(
     state = switch_env,
@@ -176,6 +178,8 @@ syngenr <- function(years = 100,
     bimodal = bimodal_env,
     comp = comp
   )
+  
+  # Simulate population trend
   trend = seq(-1, 1, length.out = years)
   trend_resp <- response(state = switch_trend,
                          n_sp = n_sp,
@@ -185,20 +189,25 @@ syngenr <- function(years = 100,
                          comp = FALSE
   )
   
+  # Simulate annual abundances
   simcom <- matrix(0, years, n_sp)
   er <- env_resp
   tr <- trend_resp
-  for (i in 1:n_sp) {
+  for (i in seq_len(n_sp)) {
     abi <- vector("numeric", years)
-    for (j in 1:years) {
+    for (j in seq_len(years)) {
       abi[j] <-
         stats::rnorm(1, mean_abu[i] * (1 + env[j] * er[i]) * (1 + trend[j] * tr[i]),
               sd_abu[i])
-      if (bound_pos)
+      # Keep values positive
+      if (bound_pos) {
         abi[abi < 0] <- 0
+        }
     }
     simcom[, i] <- abi
   }
+  
+  # DFs to return
   param_species <-
     data.frame(env_resp, trend_resp, mean_abu, sd_abu)
   param_years <- data.frame(env, trend)
@@ -218,6 +227,8 @@ syngenr <- function(years = 100,
     comp,
     bound_pos
   )
+  
+  # Names list to return
   res <- list(
     time_species_matrix = simcom,
     param_years = param_years,

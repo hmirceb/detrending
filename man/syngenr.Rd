@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulations.R
 \name{syngenr}
 \alias{syngenr}
-\title{Simulate fluctuations in species abundances across time}
+\title{Simulate community with fluctuations in species abundances across time}
 \usage{
 syngenr(
   years = 100,
@@ -35,7 +35,7 @@ individuals or the total amount of biomass.}
 \item{power}{Numeric. The slope of the relationship between log(mean) and log(variance) of
 the abundances of the species.}
 
-\item{switch_env}{Boolean. Defines if the species abundances respond to a hypothetical environmental cue.}
+\item{switch_env}{Boolean. Defines if the species abundances respond to a hypothetical environmental cue. Default FALSE.}
 
 \item{mean_env_resp}{Numeric. The mean of the normal distribution from which each of the
 species responses to the environemtnal cue is drawn.}
@@ -45,15 +45,15 @@ from which each of the species responses to the environemtnal cue is drawn.}
 
 \item{bimodal_env}{Boolean. Making the reponse to the environmental cue either
 uniform among the species (if FALSE), or making the majority of half of the
-species respond positively, and the other half negatively.}
+species respond positively, and the other half negatively. Default FALSE.}
 
 \item{comp}{Boolean. If TRUE, species exhibit compensatory dynamics, i.e. the gain
 of abundance in a species from one year to the next, is compensated by the
 loss of abundance in another species, where the latter has a similar mean
-abundance value.}
+abundance value. Default FALSE.}
 
 \item{switch_trend}{Boolean. Defines if there is a general monotonic
-trend in abundances of species across the timeseries.}
+trend in abundances of species across the timeseries. Default FALSE.}
 
 \item{mean_trend_resp}{Numeric. The mean of the normal distribution from which each of the
 species responses to the longterm trend is drawn. Default is 1.}
@@ -66,10 +66,10 @@ drawn. Default is 1.}
 positive long term trend of abundances, and the other half expresses a
 negative long term trend. If FALSE, most of the species exhibit a uniform long
 term trend in abundances, depending on the value set for mean_trend and
-mean_sd.}
+mean_sd. Default FALSE.}
 
-\item{bound_pos}{Boolean. If true, abundance values that are simulated to be
-negative, will be set to zero.}
+\item{bound_pos}{Boolean. If TRUE, abundance values that are simulated to be
+negative, will be set to zero. Default TRUE.}
 }
 \value{
 A named list with four elements:
@@ -89,6 +89,5 @@ param_general: A data frame with only one row, containing all the parameter
 settings from the function call.
 }
 \description{
-The arguments in \code{syngenr} are set to predefined default values, which can of course
-be customised, or sampled from parameter spaces.
+Simulate community with fluctuations in species abundances across time
 }

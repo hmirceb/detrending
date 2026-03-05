@@ -11,7 +11,7 @@ response(state = TRUE, bimodal = FALSE, mean = 1, sd = 1, n_sp, comp = FALSE)
 
 \item{bimodal}{Boolean. If TRUE, half of the species respond opposite to the other
 half, if FALSE, all species respond in the same direction. How many species
-respond in a given direction also depends on the settings of mean and sd.}
+respond in a given direction also depends on the settings of mean and sd. Default FALSE.}
 
 \item{mean}{Numeric. The mean of the normal distribution from which each of the species
 responses is drawn.}
@@ -24,7 +24,7 @@ which each of the species responses is drawn.}
 \item{comp}{Boolean. If TRUE, species will exhibit compensatory dynamics. This is
 simulated by having species of similar abundance to respond in opposite
 directions. This argument is therefore only meaning full when having set
-bimodal = TRUE.}
+bimodal = TRUE. Default FALSE.}
 }
 \value{
 The output is a vector with the length of the number of species, each

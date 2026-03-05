@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulations.R
 \name{geom_seq}
 \alias{geom_seq}
-\title{Function to generate a geometric distribution of relative abundances}
+\title{Helper function to generate a geometric distribution of relative abundances}
 \usage{
 geom_seq(max_rel_abu, n_sp)
 }
@@ -17,5 +17,5 @@ A vector with the length of the number of species containing the
 relative abundances of the species.
 }
 \description{
-Function to generate a geometric distribution of relative abundances
+Helper function to generate a geometric distribution of relative abundances
 }

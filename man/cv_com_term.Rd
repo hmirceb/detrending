@@ -11,7 +11,7 @@ cv_com_term(x, total = TRUE, weighted = FALSE, term = "var", time_col = "time")
 
 \item{total}{Boolean. If TRUE, compute CV of the sum of annual abundances. If FALSE computes the average of the CV of each species. Default TRUE.}
 
-\item{weighted}{Boolean. Weight the CV of each population by its average relative abundance per species across years.}
+\item{weighted}{Boolean. Weight the CV of each population by its average relative abundance per species across years. Default FALSE.}
 
 \item{term}{Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".}
 
