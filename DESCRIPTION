@@ -4,10 +4,10 @@ Version: 0.0.0.9000
 Authors@R: c(
     person("Héctor", "Miranda-Cebrián", email = "hectorm94@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0340-8373")),
     person("Jules", "Segrestin", email = "", role = "aut"),
-    person("Jan", "Leps", email = "", role = c("cph", "fnd")),
+    person("Jan", "Lepš", email = "", role = c("cph", "fnd")),
     person("Francesco", "de Bello", email = "", role = c("cph", "fnd")),
-    person("Ales", "Lisner", email = "", role = c("cph", "fnd")),
-    person("Lars", "Gotztenberg", email = "", role = c("cph", "fnd")),
+    person("Aleš", "Lisner", email = "", role = c("cph", "fnd")),
+    person("Lars", "Götzenberger", email = "", role = c("cph", "fnd")),
     person("Enrique", "Valencia", email = "", role = c("cph", "fnd")),
     person("Clara", "Gracia", email = "", role = c("cph", "fnd"))
     )
@@ -21,3 +21,7 @@ Imports:
   gtools
 URL: https://github.com/hmirceb/detrending
 BugReports: https://github.com/hmirceb/detrending/issues
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

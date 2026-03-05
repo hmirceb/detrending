@@ -14,14 +14,14 @@ comstab_term(x, term = "var", time_col = "time")
 \item{time_col}{Character. Name of the column with time variable. Optional with default "time".}
 }
 \value{
-An object of class \code{'comstab'}, a list of named vectors containing the following components:
+An object of class \code{comstab}, a list of named vectors containing the following components:
 \itemize{
-\item \code{'CVs'} a named vector of calculated coefficient of variations. \code{CVe} is the CV of an average species,
+\item \code{CVs}: a named vector of calculated coefficient of variations. \code{CVe} is the CV of an average species,
 \code{CVtilde} is the mean of species CVs weighted by their relative abundances, \code{CVa} is the expected community CV if
 the community was stabilized by species asynchrony only, and \code{CVc} is the observed community CV.
-\item \code{'Stabilization'} a named vector of the stabilizing effects. \code{tau} is the total stabilization, \code{Delta} is
+\item \code{Stabilization}: a named vector of the stabilizing effects. \code{tau} is the total stabilization, \code{Delta} is
 the dominance effect, \code{Psi} is the asynchrony effect, and \code{omega} is the averaging effect.
-\item \code{'Relative'} a named vector of the relative contributions of each stabilizing effect to the total stabilization.
+\item \code{Relative}: a named vector of the relative contributions of each stabilizing effect to the total stabilization.
 \code{Delta_cont}, \code{Psi_cont}, and \code{omega_cont} are the relative contribution of respectively, the dominance, asynchrony, and averaging effects to the total stabilization.
 Returns a vector of NAs if any Stabilizing effect is higher than 1.
 }
@@ -30,7 +30,7 @@ Returns a vector of NAs if any Stabilizing effect is higher than 1.
 \code{comstab_term()} partitions the temporal coefficient of variation of a community into the variability of the average species and three stabilizing effects: the dominance, asynchrony and averaging effects. It allows standard estimates of variance and CV as well as their detrended versions using Hill's two and three term local quadratic variance estimates (see Details).
 }
 \details{
-The analytic framework is described in details in Segrestin \emph{et al.} (2024).
+The analytic framework is described in detail in Segrestin \emph{et al.} (2024).
 In short, the partitioning relies on the following equation: \deqn{CV_{com} = CV_e \Delta \Psi \omega}
 where \eqn{CV_{com}} is the community coefficient of variation (reciprocal of community stability),
 \eqn{CV_e} is the expected community CV when controlling for the dominance structure and species temporal synchrony,

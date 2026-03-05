@@ -162,15 +162,19 @@ is_even <- function(x) {
 #' @export
 #'
 plot_com <- function(x) {
+  # Plot first species
   plot(y = x[,1],
        x = 1:nrow(x),
+       pch = 19,
        col = 1,
        ylim = c(min(x), max(x)),
        xlab = "time",
        ylab = "abundance")
+  # Add additional points
   for (i in 2:ncol(x)) {
     graphics::points(y = x[,i],
            x = 1:nrow(x),
+           pch = 19,
            col = i)
   }
 }

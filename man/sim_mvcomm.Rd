@@ -31,7 +31,7 @@ sim_mvcomm(
 
 \item{corr}{Numeric. Correlation between populations.}
 
-\item{p}{Numeric. Dispersion value for a Dirichlet distribution bound between 0-1. Controls the evenness of the community with lower values indicating less dominance.}
+\item{p}{Numeric. Dispersion parameter for a Dirichlet distribution. Controls the evenness of the community with lower values indicating less dominance.}
 
 \item{switch_trend}{Boolean. Apply a trend to the data. Default FALSE.}
 
@@ -39,11 +39,23 @@ sim_mvcomm(
 
 \item{trend_sd}{Numeric. Standard deviation of the trend.}
 
-\item{bimodal_trend}{Boolean. If TRUE half of the species have negative trends and half positive.}
+\item{bimodal_trend}{Boolean. If TRUE half of the species have negative trends and half positive. Default FALSE.}
 }
 \value{
-A named list containing a data.frame with the simulated data, the true mean trends of each simulated species and the parameters used to simulate the data.
+A named list with three elements:
+\itemize{
+\item \code{sim_data}: A data.frame with the simulated data, species in columns and time steps in rows.
+\item \code{true_trend}: A named vector with the true mean trends of each simulated species.
+\item \code{params}: A named vector with the parameters used to simulate the data.
+}
 }
 \description{
 Simulate community from a multivariate normal
+}
+\author{
+Lars Götzenberger, \email{jsegrestin@gmail.com}
+
+Jan Lepš, \email{suspa@prf.jcu.cz}
+
+Héctor Miranda-Cebrián, \email{hectorm94@gmail.com}
 }

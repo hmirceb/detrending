@@ -1,0 +1,138 @@
+---
+title: "detrending"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The **detrending** package is a suite of tools for calculating community stability metrics. It includes a framework to decompose stability into its compensatory dynamis, dominance and diversity effects, multivariate version of community stability and tools for checking data structure. It incorporates several procedures to check and account for trends in data that might lead to spureous patterns of synchrony or variance.
+
+```{r load}
+devtools::load_all()
+```
+## Cleaning and formatting data
+Most functions in `detrending` work with a data.frame of species data in columns and time steps in rows. The package includes the function `clean_community` to help with this. This function gives the appropriate format to input data in wide (time by species) and long (time and species in two separate columns) formats. In addition, it allows removing years with no data and filtering out transient species that only appear in certain number of years based on a threshold determined by the user. Is is also possible to specify a column with a community identifier if we have several communities in our data or a time column. The function also sorts each community in chronological order if a time column is provided or assumes that data are in order if not.
+
+```{r formatting_wide, fig.height=4, fig.width=7}
+# Load example data
+data("example_data")
+
+# Show first rows of the data
+head(example_data_long)
+
+# We can
+clean_example <- clean_community(x = example_data_long,
+                input_format = "long",
+                community_col = "comm", # Column with community id
+                time_col = "time", # Column with time information
+                empty_years = FALSE, # Remove years with no data
+                filter_transient = TRUE, # Filter out 
+                threshold = 0.3) # Minimum proportion of years with data to keep a species
+head(clean_example)
+
+# We can also check the number of time steps, species and 
+# other taxonomic alpha diversity metrics in each community. 
+# This metrics can be calculated for the whole community
+comm_expl(x = clean_example, total = "overall")
+
+# Or the average across years
+comm_expl(x = clean_example, total = "average")
+```
+
+### Data simulation
+We can easily simulate a time series of species abundance for a community of a desired number of species, time steps, relation between mean and variance according to a Taylor's Power Law (TPL), evenness of the community, and average correlation between species.
+```{r simulation, fig.height=4, fig.width=7}
+devtools::load_all()
+sim_df <- sim_mvcomm(p = 5)
+sim_df2 <- sim_mvcomm(p = 0.8)
+
+par(mfrow = c(1,2))
+plot_com(sim_df$sim_data)
+plot_com(sim_df2$sim_data)
+par(mfrow = c(1,1))
+```
+
+### Trend estimation
+We can also estimate linear trends in species abundance and test their statistical significance.
+```{r trends, fig.height=4, fig.width=7}
+# Simulate data without strong trends
+sim_data_notrend <- sim_mvcomm(p = 0.8, switch_trend = T, trend_mean = 0)$sim_data
+comm_trend(x = sim_data_notrend, method = "loglinear", plot = T)
+
+# Simulate data with some postitive and negative trends
+sim_data_trend <- sim_mvcomm(p = 0.8, switch_trend = T, trend_mean = 0.4)$sim_data
+comm_trend(x = sim_data_trend, method = "loglinear", plot = T)
+```
+
+### Synchrony metrics
+We can calculate synchrony and stability metrics with this data: 
+```{r sychrony}
+# Synchrony metrics can be calculated one by one
+psi_segrestin(x = sim_df$sim_data)
+
+# Or several at once
+sync_term(x = sim_df$sim_data, index = c("psi", "eta"))
+
+# Coefficient of variation
+cv_com_term(x = sim_df$sim_data)
+```
+
+An important aspect of the `detrending` is that it allows the estimation of detrended stability and synchrony metrics.
+Let's see this with an extreme case in which two species have clearly opposite trends but fluctuate randomly.
+
+```{r detrends, fig.height=4, fig.width=4}
+# Generate a vector of timesteps
+time <- seq_len(50)
+# Create random noise for each species
+noise1 <- rnorm(length(time), sd = sqrt(mean(time)))
+noise2 <- rnorm(length(time), sd = sqrt(mean(time)))
+# Add noise to time steps plus a constant to avoid negative values
+ab1 <- time + noise1 + 200
+# The same but with decreasing abundance
+ab2 <- sort(time, decreasing = T) + noise2 + 200
+# Plot
+plot(x = time, y = ab1, pch = 19, col = 1, ylim = c(min(c(ab1, ab2)), max(c(ab1, ab2))),
+     xlab = "time", ylab = "abundance")
+points(x = time, y = ab2, pch = 19, col = 2)
+legend("topright", legend = c("sp_1", "sp_2"), col = palette()[1:2], pch = 19)
+```
+
+Classic tests of synchrony would report a strong asynchrony between these species as a consequence of their opposing trends. 
+
+```{r synchrony detrended, fig.height=4, fig.width=4}
+# Compute some classic synchrony metrics
+classic_sync <- sync_term(x = data.frame(time = time, sp_1 = ab1, sp_2 = ab2), 
+                          term = "var")
+
+# Compute some classic synchrony metrics
+det_sync <- sync_term(x = data.frame(time = time, sp_1 = ab1, sp_2 = ab2),
+                      term = "two",
+                      time_col = "time")
+
+# Plot both metrics
+plot(x = 1:4, y = classic_sync, 
+     col = 3, 
+     pch = 19,
+     xaxt = "n",
+     ylab = "Value",
+     xlab = "Synchrony metric",
+     ylim = c(min(c(classic_sync, det_sync)), max(c(classic_sync, det_sync))))
+points(x = 1:4, y = det_sync,
+       col = 4,
+       pch = 19)
+axis(1, at = 1:4, labels = c("psi", "phi", "eta", "logvar"))
+legend("bottomleft", legend = c("Classic", "Detrended"), col = palette()[3:4], pch = 19)
+```
+
+Psi and phi are bounded between 0 and 1, with lower values indicating asynchrony and values closer to 1 synchrony. Eta is bouind betwen -1 and 1, while logvar is open, although in both metric values closer to 0 indicate independent fluctuations. Here we see how detrended metrics show more indeopendent fluctuations in species abundances, coindicing with the random noise that we introduced in each species.
+
+It is important to note that standard and detrended versions of these metrics are not mutually exclusive and give different information. Standard metrics represent the overall synchrony of the community while detrended version focus on year to year variability. In communities with small or nonexistent trends, both metrics yield very similar results.

@@ -264,14 +264,15 @@ sync_term <- function(x,
   index_func <- options[options$index %in% index,]$fun
   
   # Check if a time column was specified for detrending methods
-  x <- tryCatch(
-    # Run check_time
-    check_time(x = x, time_col = time_col, term = term, rm = TRUE),
-    # If it returns a warning, add time column to result
-    # This way we avoid multiple warnings when running synchrony functions later
-    warning = function(w) return(
-      cbind(time = seq_len(nrow(x)),
-            check_time(x = x, time_col = time_col, term = term, rm = TRUE))))
+  x <- check_time(x = x, time_col = time_col, term = term, rm = FALSE)
+  # x <- tryCatch(
+  #   # Run check_time
+  #   check_time(x = x, time_col = time_col, term = term, rm = FALSE),
+  #   # If it returns a warning, add time column to result
+  #   # This way we avoid multiple warnings when running synchrony functions later
+  #   warning = function(w) return(
+  #     cbind(time = seq_len(nrow(x)),
+  #           check_time(x = x, time_col = time_col, term = term, rm = TRUE))))
   
   sync <- sapply(index_func, function(f){
     syn_func <- match.fun(f) # match function

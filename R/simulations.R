@@ -6,13 +6,22 @@
 #' @param power Numeric. Exponent of the Taylor's Power Law to estimate variance from mean abundance.
 #' @param bound_pos Boolean. Bound abundance values to be positive. Default TRUE.
 #' @param corr Numeric. Correlation between populations.
-#' @param p Numeric. Dispersion value for a Dirichlet distribution bound between 0-1. Controls the evenness of the community with lower values indicating less dominance.
+#' @param p Numeric. Dispersion parameter for a Dirichlet distribution. Controls the evenness of the community with lower values indicating less dominance.
 #' @param switch_trend Boolean. Apply a trend to the data. Default FALSE.
-#' @param trend_mean Numeric. Mean of the trend.
+#' @param trend_mean Numeric. Mean of the trend. Positive values indicate growth and negative ones, decline.
 #' @param trend_sd Numeric. Standard deviation of the trend.
-#' @param bimodal_trend Boolean. If TRUE half of the species have negative trends and half positive.
+#' @param bimodal_trend Boolean. If TRUE half of the species have negative trends and half positive. Default FALSE.
 #'
-#' @returns A named list containing a data.frame with the simulated data, the true mean trends of each simulated species and the parameters used to simulate the data.
+#' @returns A named list with three elements:
+#' * `sim_data`: A data.frame with the simulated data, species in columns and time steps in rows.
+#' 
+#' * `true_trend`: A named vector with the true mean trends of each simulated species. 
+#' 
+#' * `params`: A named vector with the parameters used to simulate the data.
+#' 
+#' @author Lars Götzenberger, \email{jsegrestin@@gmail.com}
+#' @author Jan Lepš, \email{suspa@@prf.jcu.cz}
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
 #' @export
 sim_mvcomm <- function(n_sp = 10,
@@ -74,10 +83,13 @@ sim_mvcomm <- function(n_sp = 10,
   # Add a small offset (1% of the mean abundance of each species) to avoid having 0s
   offset <- colMeans(simcom)*0.01 
   # Add vector to matrix rowwise
-  simcom <- sweep(x = simcom, MARGIN = 2, STATS = offset, FUN = "+")
+  simcom <- as.data.frame(sweep(x = simcom, MARGIN = 2, STATS = offset, FUN = "+"))
+  
+  # Set species names
+  colnames(simcom) <- paste(sep = "_", "sp", seq_along(colnames(simcom)))
   
   # Results into list
-  res <- list(sim_data = as.data.frame(simcom),
+  res <- list(sim_data = simcom,
               true_trend = exp(colMeans(apply(log(simcom), 2, diff))),
               params = c(n_sp = n_sp,
                          years = years,
@@ -133,19 +145,23 @@ sim_mvcomm <- function(n_sp = 10,
 #'
 #' @return A named list with four elements:
 #'
-#' time_species_matrix: The simulated temporal community data where species are
+#' * `sim_data`: The simulated temporal community data where species are
 #' columns and years are rows.
 #'
-#' param_years: Values for the environmental cue and the trend throughout the
+#' * `param_years`: Values for the environmental cue and the trend throughout the
 #' years. Note that these contain values even if the environment or trend are
 #' switched off.
 #'
-#' param_species: A data frame containing the responses to the environment and
+#' * `param_species`: A data frame containing the responses to the environment and
 #' the long term trend, as well as the mean abundance and its standard deviation
 #' for each species in the community.
 #'
-#' param_general: A data frame with only one row, containing all the parameter
+#' * `param_general`: A data frame with only one row, containing all the parameter
 #' settings from the function call.
+#' 
+#' @author Lars Götzenberger, \email{jsegrestin@@gmail.com}
+#' @author Jan Lepš, \email{suspa@@prf.jcu.cz}
+#' 
 #' @export
 syngenr <- function(years = 100,
                     n_sp = 16,
@@ -191,13 +207,11 @@ syngenr <- function(years = 100,
   
   # Simulate annual abundances
   simcom <- matrix(0, years, n_sp)
-  er <- env_resp
-  tr <- trend_resp
   for (i in seq_len(n_sp)) {
     abi <- vector("numeric", years)
     for (j in seq_len(years)) {
       abi[j] <-
-        stats::rnorm(1, mean_abu[i] * (1 + env[j] * er[i]) * (1 + trend[j] * tr[i]),
+        stats::rnorm(1, mean_abu[i] * (1 + env[j] * env_resp[i]) * (1 + trend[j] * trend_resp[i]),
               sd_abu[i])
       # Keep values positive
       if (bound_pos) {
@@ -206,6 +220,10 @@ syngenr <- function(years = 100,
     }
     simcom[, i] <- abi
   }
+  simcom <- as.data.frame(simcom)
+  
+  # Set species names
+  colnames(simcom) <- paste(sep = "_", "sp", seq_along(colnames(simcom)))
   
   # DFs to return
   param_species <-
@@ -230,7 +248,7 @@ syngenr <- function(years = 100,
   
   # Names list to return
   res <- list(
-    time_species_matrix = simcom,
+    sim_data = simcom,
     param_years = param_years,
     param_species = param_species,
     param_general = param_general

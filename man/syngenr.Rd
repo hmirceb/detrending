@@ -73,21 +73,24 @@ negative, will be set to zero. Default TRUE.}
 }
 \value{
 A named list with four elements:
-
-time_species_matrix: The simulated temporal community data where species are
+\itemize{
+\item \code{sim_data}: The simulated temporal community data where species are
 columns and years are rows.
-
-param_years: Values for the environmental cue and the trend throughout the
+\item \code{param_years}: Values for the environmental cue and the trend throughout the
 years. Note that these contain values even if the environment or trend are
 switched off.
-
-param_species: A data frame containing the responses to the environment and
+\item \code{param_species}: A data frame containing the responses to the environment and
 the long term trend, as well as the mean abundance and its standard deviation
 for each species in the community.
-
-param_general: A data frame with only one row, containing all the parameter
+\item \code{param_general}: A data frame with only one row, containing all the parameter
 settings from the function call.
+}
 }
 \description{
 Simulate community with fluctuations in species abundances across time
+}
+\author{
+Lars Götzenberger, \email{jsegrestin@gmail.com}
+
+Jan Lepš, \email{suspa@prf.jcu.cz}
 }

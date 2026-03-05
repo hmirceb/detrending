@@ -1,6 +1,6 @@
-n_com <- 3
-n_sps <- 5
-n_year <- 10
+n_com <- 2
+n_sps <- 10
+n_year <- 15
 d <- round(matrix(data = abs(rnorm(n = n_com*n_sps*n_year)),
                   nrow = n_year*n_com, 
                   ncol = n_sps)*10)
@@ -37,8 +37,4 @@ dd_wide = dd_wide[!names(dd_wide) %in% c("id")]
 dd_wide[,5] <- 0
 
 dd_long <- dd_long[, !names(dd_long) == "id"]
-
-devtools::load_all()
-
-sync_term(x = dd_wide, index = "eta")
 
