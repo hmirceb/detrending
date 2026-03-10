@@ -4,12 +4,12 @@
 \alias{var_t2mv}
 \title{Multivariate two term local quadratic variance of community composition}
 \usage{
-var_t2mv(x, d = c("euclidean", "chord"))
+var_t2mv(x, d = "euclidean")
 }
 \arguments{
 \item{x}{A community abundance matrix.}
 
-\item{d}{Character. Distance metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.}
+\item{d}{Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.}
 }
 \value{
 A numeric value. The multivariate two term quadratic variance of the community.
@@ -21,6 +21,19 @@ Multivariate two term local quadratic variance of community composition
 The multivariate two term local quadratic variance (\eqn{TTLQV_{mv2}}) of community composition is the detrended version of multivariate variance (\eqn{var_{mv}}):
 \deqn{TTLQV_{mv2} = \dfrac{ \sum_{i=1}^{t-1}{ED(X_{i}, X_{i+1})^2} }{2(t-1)}}
 Where \eqn{X_{i}} is the composition of the community at time \eqn{i} and \eqn{ED(X_{i}, X_{i+1})} the Euclidean distance between succesive time points.
+}
+\examples{
+require(detrending)
+
+# Load and clean data
+data(example_data_wide)
+metacomm_df <- clean_community_wide(x = example_data_wide)
+comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)]
+
+# Calculate multivariate variance
+var_t2mv(x = comm_df, d = "euclidean") # 193.893
+var_t2mv(x = comm_df, d = "chord") # 0.370
+
 }
 \author{
 Jan Lepš, \email{suspa@prf.jcu.cz}

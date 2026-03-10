@@ -15,6 +15,16 @@
 #' 
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
+#' @examples
+#' require(detrending)
+#' 
+#' # Load and clean data
+#' data(example_data_wide)
+#' metacomm_df <- clean_community_wide(x = example_data_wide)
+#' comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)] # Select only community 1
+#' # Transform
+#' chord_transform(x = comm_df)
+#' 
 #' @export
 chord_transform <- function(x) {
   c_t <- x / sqrt(rowSums(x^2))
@@ -24,7 +34,7 @@ chord_transform <- function(x) {
 #' Multivariate variance of community composition
 #'
 #' @param x A community abundance matrix.
-#' @param d Character. Distance metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
+#' @param d Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
 #'
 #' @details
 #' The multivariate variance of community composition is defined as the average square Euclidean distance between annual observations (\eqn{X_{i}}) and the average community composition (\eqn{\overline{X}}) following: 
@@ -36,8 +46,20 @@ chord_transform <- function(x) {
 #' @author Aleš Lisner, \email{lisnea00@@jcu.cz}
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
+#' @examples
+#' require(detrending)
+#' 
+#' # Load and clean data
+#' data(example_data_wide)
+#' metacomm_df <- clean_community_wide(x = example_data_wide)
+#' comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)]
+#' 
+#' # Calculate multivariate variance
+#' var_mv(x = comm_df, d = "euclidean") # 183.752
+#' var_mv(x = comm_df, d = "chord") # 0.399
+#' 
 #' @export
-var_mv <- function(x, d = c("euclidean", "chord")){
+var_mv <- function(x, d = "euclidean"){
   if( !d %in% c("euclidean", "chord") ){
     stop("Unsuitable distance metric. Please choose one of 'euclidean' or 'chord'")
   }
@@ -63,7 +85,7 @@ var_mv <- function(x, d = c("euclidean", "chord")){
 #' Multivariate two term local quadratic variance of community composition
 #'
 #' @param x A community abundance matrix.
-#' @param d Character. Distance metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
+#' @param d Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
 #'
 #' @details
 #' The multivariate two term local quadratic variance (\eqn{TTLQV_{mv2}}) of community composition is the detrended version of multivariate variance (\eqn{var_{mv}}): 
@@ -76,8 +98,20 @@ var_mv <- function(x, d = c("euclidean", "chord")){
 #' @author Aleš Lisner, \email{lisnea00@@jcu.cz}
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
+#' @examples
+#' require(detrending)
+#' 
+#' # Load and clean data
+#' data(example_data_wide)
+#' metacomm_df <- clean_community_wide(x = example_data_wide)
+#' comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)]
+#' 
+#' # Calculate multivariate variance
+#' var_t2mv(x = comm_df, d = "euclidean") # 193.893
+#' var_t2mv(x = comm_df, d = "chord") # 0.370
+#' 
 #' @export
-var_t2mv <- function(x, d = c("euclidean", "chord")){
+var_t2mv <- function(x, d = "euclidean"){
   if( !d %in% c("euclidean", "chord") ){
     stop("Unsuitable distance metric. Please choose one of 'euclidean' or 'chord'")
   }
@@ -91,7 +125,7 @@ var_t2mv <- function(x, d = c("euclidean", "chord")){
   # Get superdiagonal (distance between consecutive years)
   dis <- dis[row(dis) == col(dis) + 1]
   # TTQVmv
-  mv_var <- (dis^2) / (2*(nrow(x)-1))
+  mv_var <- sum(dis^2) / (2*(nrow(x)-1))
   
   return(mv_var)
 }
@@ -99,7 +133,7 @@ var_t2mv <- function(x, d = c("euclidean", "chord")){
 # #' Multivariate three term local quadratic variance of community composition
 # #'
 # #' @param x A community abundance matrix.
-# #' @param d Character. Distance metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
+# #' @param d Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
 # #'
 # #' @returns
 # #'
@@ -128,7 +162,7 @@ var_t2mv <- function(x, d = c("euclidean", "chord")){
 #' Multivariate coefficient of variation
 #'
 #' @param x A community abundance matrix.
-#' @param d Character. Distance metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
+#' @param d Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
 #' @param term Character. Term to estimate the variance. One of "var" (for standard variance) "two" for Hill's two term local quadrat variance. Default "var".
 #'
 #' @details The multivariate coefficient of variation is estimated by dividing the multivariate variance of community composition by the sample norm of the average composition.
@@ -138,6 +172,18 @@ var_t2mv <- function(x, d = c("euclidean", "chord")){
 #' @author Jan Lepš, \email{suspa@@prf.jcu.cz} 
 #' @author Aleš Lisner, \email{lisnea00@@jcu.cz}
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#' 
+#' @examples
+#' require(detrending)
+#' 
+#' # Load and clean data
+#' data(example_data_wide)
+#' metacomm_df <- clean_community_wide(x = example_data_wide)
+#' comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)]
+#' 
+#' # Calculate multivariate variance
+#' cv_mv(x = comm_df, d = "euclidean", term = "var") # 0.785
+#' cv_mv(x = comm_df, d = "euclidean", term = "two") # 0.807
 #' 
 #' @export
 cv_mv <- function(x, d = "euclidean", term = "var") {

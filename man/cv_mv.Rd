@@ -9,7 +9,7 @@ cv_mv(x, d = "euclidean", term = "var")
 \arguments{
 \item{x}{A community abundance matrix.}
 
-\item{d}{Character. Distance metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.}
+\item{d}{Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.}
 
 \item{term}{Character. Term to estimate the variance. One of "var" (for standard variance) "two" for Hill's two term local quadrat variance. Default "var".}
 }
@@ -21,6 +21,19 @@ Multivariate coefficient of variation
 }
 \details{
 The multivariate coefficient of variation is estimated by dividing the multivariate variance of community composition by the sample norm of the average composition.
+}
+\examples{
+require(detrending)
+
+# Load and clean data
+data(example_data_wide)
+metacomm_df <- clean_community_wide(x = example_data_wide)
+comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)]
+
+# Calculate multivariate variance
+cv_mv(x = comm_df, d = "euclidean", term = "var") # 0.785
+cv_mv(x = comm_df, d = "euclidean", term = "two") # 0.807
+
 }
 \author{
 Jan Lepš, \email{suspa@prf.jcu.cz}

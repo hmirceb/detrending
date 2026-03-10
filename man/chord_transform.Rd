@@ -19,6 +19,17 @@ Applies chord transformation to a matrix (see Details).
 Chord transformation standardizes values by dividing values in each row by the sample norm (\emph{SN}) of the corresponding row following:
 \deqn{SN = \sqrt{\sum_{i=1}^{S} x_i^2}}
 }
+\examples{
+require(detrending)
+
+# Load and clean data
+data(example_data_wide)
+metacomm_df <- clean_community_wide(x = example_data_wide)
+comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)] # Select only community 1
+# Transform
+chord_transform(x = comm_df)
+
+}
 \references{
 \itemize{
 \item Orlóci, L. (1967). An agglomerative method for classification of plant communities. The Journal of Ecology, 193-206.
