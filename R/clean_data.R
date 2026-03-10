@@ -35,6 +35,7 @@ clean_community_wide <- function(x,
   if( !community_col %in% colnames(x) ) {
     warning("Missing 'community' column. Data are assumed to belong to a single community.",
             call. = FALSE)
+    community_col <- "comm"
     x <- cbind(comm = as.character(rep(1, times = nrow(x))), x)
   }
   # Check time column
@@ -168,6 +169,7 @@ clean_community_long <- function(x,
   # Check community column, if not create one and assume a single community
   if( !community_col %in% colnames(x) ) {
     warning("Missing 'community' column. Data are assumed to belong to a single community.")
+    community_col <- "comm"
     x <- cbind(comm = as.character(rep(1, times = nrow(x))), x)
   }
   # Check time column

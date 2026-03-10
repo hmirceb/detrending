@@ -39,7 +39,7 @@ clean_community(
 \item{threshold}{Numeric. Minimum proportion (between 0 and 1) of time points with valid data to consider a species as transient. Default 0.3.}
 }
 \value{
-A data.frame with the community data ready to use in other functions.
+A data.frame with community data ready to use in other functions.
 }
 \description{
 Clean community data to use in other functions
