@@ -15,3 +15,6 @@ A plot.
 \description{
 Plot a community time series
 }
+\author{
+Héctor Miranda-Cebrián, \email{hectorm94@gmail.com}
+}

@@ -13,6 +13,7 @@
 #'
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
+#' @noRd
 check_time <- function(x, time_col = "time", term = NULL, rm = TRUE) {
   
   # Check if a time column was specified for detrending methods
@@ -49,6 +50,9 @@ check_time <- function(x, time_col = "time", term = NULL, rm = TRUE) {
 #'
 #' @returns A data.frame with species with 0 abundance removed.
 #'
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#'
+#' @noRd
 remove_empty_sps <- function(x, time_col = "time", community_col = "comm") {
   # Set NAs as 0
   x[is.na(x)] <- 0
@@ -76,6 +80,7 @@ remove_empty_sps <- function(x, time_col = "time", community_col = "comm") {
 #'
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #'
+#' @noRd
 jenfish <- function(x, 
                     perc = FALSE) {
   # Check if cover is percentage
@@ -94,8 +99,10 @@ jenfish <- function(x,
 #' @param plot Boolean. Plot the species-abundance curve of the community.
 #'
 #' @returns A data.frame with each species in the community, its mean abundance and if it is dominant or not.
-#' @export
-#'
+#' 
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#' 
+#' @noRd
 get_dominants <- function(x, q = 0.9, plot = F) {
   # Sort species by their mean abundance across years
   sps_sorted <- sort(apply(x, 2,
@@ -125,8 +132,10 @@ get_dominants <- function(x, q = 0.9, plot = F) {
 #' @param q Numeric. Threshold of relative abundance to consider a species dominant.
 #'
 #' @returns A character vector. Names of the dominant species with missing values.
-#' @export
-#'
+#' 
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#' 
+#' @noRd
 check_dominants <- function(x, q = 0.9) {
   # Get dominant species
   doms <- get_dominants(x = x, q = q, plot = FALSE)
@@ -150,6 +159,15 @@ check_dominants <- function(x, q = 0.9) {
   }
 }
 
+#' Even number
+#'
+#' @param x Numeric. A number
+#'
+#' @returns Boolean.
+#' 
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#' 
+#' @noRd
 is_even <- function(x) {
   return( x %% 2 == 0 )
 }
@@ -159,8 +177,17 @@ is_even <- function(x) {
 #' @param x A data.frame. A community matrix of abundances with time in rows and taxa in columns.
 #'
 #' @returns A plot.
+#' 
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#' 
+#' @examples
+#' require(detrending)
+#' 
+#' # Simulate data
+#' comm_data <- sim_mvcomm()
+#' plot_com(comm_data$sim_data)
+#' 
 #' @export
-#'
 plot_com <- function(x) {
   # Plot first species
   plot(y = x[,1],
@@ -185,8 +212,10 @@ plot_com <- function(x) {
 #' @param meani Numeric. A vector of means.
 #'
 #' @returns A named vector with coefficients a and b for the relation between variance and mean according to Taylor's Power Law.
-#' @export
-#'
+#' 
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
+#' 
+#' @noRd
 tpl <- function(vari, meani) {
   # Check species with variance 0 because their log cannot be computed
   inds <- vari != 0

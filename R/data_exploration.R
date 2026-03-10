@@ -78,6 +78,14 @@ comm_expl <- function(x,
                      time_col = "time",
                      trend = c("none", "dennis", "loglinear")){
   
+  # Check community column, if not present create one and assume a single community
+  if( !community_col %in% colnames(x) ) {
+    warning("Missing 'community' column. Data are assumed to belong to a single community.",
+            call. = FALSE)
+    community_col <- "comm"
+    x <- cbind(comm = as.character(rep(1, times = nrow(x))), x)
+  }
+  
   # Split data by timestep
   if( isFALSE(by_timestep) ){
     splitting_factor <- as.character(x[, community_col])
