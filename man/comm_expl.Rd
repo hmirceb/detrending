@@ -10,7 +10,7 @@ comm_expl(
   total = "average",
   community_col = "comm",
   time_col = "time",
-  trend = "none"
+  trends = FALSE
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ comm_expl(
 
 \item{time_col}{Character. Name of column with time variable.}
 
-\item{trend}{Character. Method to check for trends in species abundance}
+\item{trends}{Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.}
 }
 \value{
 A named list:

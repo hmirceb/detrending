@@ -6,7 +6,7 @@
 #' 
 #' @noRd
 richness <- function(x){
-  sum(x > 0)
+  sum(x > 0, na.rm = T)
 }
 
 #' Shannon-Wiener index
@@ -18,7 +18,7 @@ richness <- function(x){
 #' 
 #' @noRd
 shannon <- function(x, relative = FALSE) {
-  a <- x[x != 0]
+  a <- x[x != 0 & !is.na(x)]
   if ( isFALSE(relative)) {
     b <- a/sum(a)
   } else {
@@ -37,7 +37,7 @@ shannon <- function(x, relative = FALSE) {
 #' 
 #' @noRd
 simpson <- function(x, relative = FALSE) {
-  a <- x[x != 0]
+  a <- x[x != 0 & !is.na(x)]
   if ( isFALSE(relative) ) {
     b <- a/sum(a)
   } else {
@@ -66,7 +66,7 @@ pielou <- function(x) {
 #' @param total Character. Wether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annula diversity indices.  
 #' @param community_col Character. Name of column with the community identifier.
 #' @param time_col Character. Name of column with time variable.
-#' @param trend Character. Method to check for trends in species abundance
+#' @param trends Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.
 #'
 #' @returns A named list:
 #'  - `diversity`: A data.frame with several diversity metrics for each community.
@@ -77,14 +77,10 @@ comm_expl <- function(x,
                       total = "average",
                       community_col = "comm",
                       time_col = "time",
-                      trend = "none"){
+                      trends = FALSE){
   # Check arguments
   if( !total %in% c("average", "overall") ) {
     stop("Argument 'total' must be one of 'average' or 'overall'")
-  }
-  
-  if( !trend %in% c("none", "dennis", "loglinear") ) {
-    stop("Argument 'trend' must be one of 'none', 'dennis' or 'loglinear'")
   }
   
   # Check community column, if not present create one and assume a single community
@@ -95,76 +91,109 @@ comm_expl <- function(x,
     x <- cbind(comm = as.character(rep(1, times = nrow(x))), x)
   }
   
-  # Split data by timestep
-  if( isFALSE(by_timestep) ){
-    splitting_factor <- as.character(x[, community_col])
-  } else {
-    # Check if a time column was specified and order rows
-    x <- check_time(x, time_col = time_col, term = "two", rm = FALSE)
-    splitting_factor <- paste(sep = "_", x[, community_col], x[, time_col])
+  # split data by community (or community and time step)
+  c_list <- split(x, f = as.character(x[, community_col]))
+  
+  if ( isTRUE(trends) ) {
+    # Estimate trends (comm_trend already checks the time column)
+    trends_df <- lapply(c_list, function(t_com){
+      sps_index <- !colnames(t_com) %in% c(community_col, time_col)
+      cbind(comm = unique(t_com[, community_col]),
+            comm_trend(x = t_com[sps_index], 
+                       method = "loglinear", 
+                       plot = F))
+    }
+    )
+    trends_df <- do.call("rbind", trends_df)
+    rownames(trends_df) <- NULL
   }
-  # split data by community
-  c_list <- split(x, f = splitting_factor)
   
   # Get info per community
-  info_by_comm <- lapply(c_list, function(c_com){
-    # Get columns with community ids
-    sps_index <- !colnames(c_com) %in% c(community_col, time_col)
-    # Number of years
-    ny <- nrow(c_com[,sps_index])
-    
-    # Calculate diversity from average annual diversity values 
-    if( total == "average" ) {
-      # Average species richness
-      S <- mean(apply(c_com[,sps_index], MARGIN = 1, FUN = richness))
-      # Shannon's index
-      H <- mean(apply(c_com[,sps_index], MARGIN = 1, FUN = shannon))
-      # Pielou`s evenness
-      J <- mean(apply(c_com[,sps_index], MARGIN = 1, FUN = pielou))
+  info_by_comm <- warn_once( # avoid a warnring for each comm if time_col is missing
+    lapply(c_list, function(c_com){
+      if ( isTRUE(by_timestep) ) {
+        # Check time column or add one if missing
+        c_com <- check_time(c_com, time_col = time_col, term = "two", rm = FALSE)
+        c_com <- remove_empty_sps(c_com, time_col = time_col, community_col = community_col)
+        # Get columns with community ids
+        sps_index <- !colnames(c_com) %in% c(community_col, time_col)
+        # Number of years
+        ny <- nrow(c_com[,sps_index])
+        # Average species richness
+        S <- apply(c_com[,sps_index], MARGIN = 1, FUN = richness)
+        # Shannon's index
+        H <- apply(c_com[,sps_index], MARGIN = 1, FUN = shannon)
+        # Pielou's evenness
+        J <- apply(c_com[,sps_index], MARGIN = 1, FUN = pielou)
+        # Format results into df
+        res <- data.frame(comm = unique(c_com[, community_col]),
+                          time = unique(c_com[, time_col]),
+                          S = S,
+                          H = H, 
+                          J = J)
+      } else {
+        # remove columns with empty species (just in case)
+        c_com <- remove_empty_sps(c_com, time_col = time_col, community_col = community_col)
+        # Get columns with community ids
+        sps_index <- !colnames(c_com) %in% c(community_col, time_col)
+        # Number of years
+        ny <- nrow(c_com[,sps_index])
+        
+        # Calculate diversity from average annual diversity values 
+        if( total == "average" ) {
+          # Average species richness
+          S <- mean(apply(c_com[,sps_index], MARGIN = 1, FUN = richness))
+          # Shannon's index
+          H <- mean(apply(c_com[,sps_index], MARGIN = 1, FUN = shannon))
+          # Pielou`s evenness
+          J <- mean(apply(c_com[,sps_index], MARGIN = 1, FUN = pielou))
+        }
+        
+        # Calculate diversity from average relative abundance of each species over time
+        if( total == "overall" ) {
+          # Average relative abundance per species
+          b <- colMeans(
+            c_com[,sps_index] / rowSums(c_com[,sps_index], na.rm = TRUE),
+            na.rm = TRUE
+          )
+          b <- b[b != 0] # remove 0s
+          # Species richness
+          S <- richness(b)
+          # Shannon's index from average relative abundances
+          H <- -1*sum(b*log(b))
+          # Pielou's evenness
+          J <- H / log(S)
+        }
+        # Format results into df
+        res <- data.frame(comm = unique(c_com[, community_col]),
+                          ny = ny, 
+                          S = S, 
+                          H = H, 
+                          J = J)
+      }
+      return(res)
     }
-    
-    # Calculate diversity from average relative abundance of each species over time
-    if( total == "overall" ) {
-      # Average relative abundance per species
-      b <- colMeans(
-        c_com[,sps_index] / rowSums(c_com[,sps_index])
-      )
-      b <- b[b != 0] # remove 0s
-      # Average species richness
-      S <- richness(b)
-      # Shannon's index from average relative abundances
-      H <- -1*sum(b*log(b))
-      # Pielou`s evenness
-      J <- pielou(colMeans(c_com[,sps_index]))
-    }
-    
-    # Format
-    if( isFALSE(by_timestep) ){
-      res <- data.frame(comm = unique(c_com[, community_col]),
-                        ny = ny, 
-                        S = S, 
-                        H = H, 
-                        J = J)
-      # Reorder result
-      res <- res[with(res, order(res[, community_col])),]
-    } else { # Information by timestep
-      res <- data.frame(comm = unique(c_com[, community_col]),
-                        time = as.numeric(unique(c_com[, time_col])),
-                        S = S,
-                        H = H, 
-                        J = J)
-      # Reorder result
-      res <- res[with(res, order(res[, community_col], 
-                                 res[, time_col])),]
-      
-    }
-    return(res)
-  }
+    )
   )
   # Join community-wise results into single df
   info_df <- do.call("rbind", info_by_comm)
   # Remove row names
   rownames(info_df) <- NULL
   
-  return(info_df)
+  # Reorder result
+  if ( isTRUE(by_timestep) ) {
+    info_df <- info_df[with(info_df, order(info_df[, community_col], 
+                                           info_df[, time_col])),]
+  } else {
+    info_df <- info_df[with(info_df, order(info_df[, community_col])),]
+  }
+  
+  # Create resulting list 
+  if ( isTRUE(trends) ) {
+    res_list <- list(diversity = info_df, trends = trends_df)
+  } else {
+    res_list <- list(diversity = info_df)
+  }
+  
+  return(res_list)
 }

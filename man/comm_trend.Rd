@@ -19,7 +19,7 @@ comm_trend(
 
 \item{method}{Character. Method to estimate the trends, one of "dennis" or "loglinear". Default "dennis".}
 
-\item{offset}{Boolean. Add a small offset to each species (1\% of the median abundance of that species) to avoid problems with log(0). Default TRUE.}
+\item{offset}{Boolean. Add a small offset to each species (1\% of its median abundance) to avoid problems with log(0). Default TRUE.}
 
 \item{plot}{Boolean. Plot species abundances and their estimated trends. Default FALSE.}
 }
