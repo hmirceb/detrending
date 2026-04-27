@@ -112,7 +112,21 @@ trend_loglinear  <- function(x, time = NULL){
 #' @param x A data.frame. A community matrix of species abundances with time in rows and taxa in columns. Optionally it can include community and time columns. 
 #' @param time_col Character. Name of the column with time variable. Optional with default "time".
 #'
-#' @returns A named vector with the *F-value* of the Redundancy Analysis and its p-value based on 999 permutations.
+#' @details This function estimates temporal trends in abundance at the community level by conducting Redundanncy Analysis (RDA) on species abundances with time as an explanaroty variable.
+#'
+#' @returns An object of class `mv_trend`, a named list with vector 
+#'  - `anova`: A data.frame with the *F-value* of the Redundancy Analysis and its p-value based on 999 permutations.
+#'  
+#'  - `rda`: An object of class `rda` with the scores of the RDA.
+#'  
+#'  - `time`: A vector with the time variable used in the RDA.
+#'
+#' @references
+#'  - 
+#'  
+#' @author Jan Lepš, \email{suspa@@prf.jcu.cz} 
+#' @author Aleš Lisner, \email{lisnea00@@jcu.cz}
+#' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #'
 #' @examples
 #' require(detrending)
@@ -120,7 +134,7 @@ trend_loglinear  <- function(x, time = NULL){
 #' # Simulate community data with trends
 #' comm_df <- sim_mvcomm(trend_mean = 0.3, bimodal_trend = TRUE)
 #' 
-#' # Estimate trend for each species and plot estimated trends
+#' # Estimate multivariate community trend
 #' trend_mv(comm_df$sim_data, time_col = "time")
 #' 
 #' @export

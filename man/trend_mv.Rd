@@ -12,10 +12,18 @@ trend_mv(x, time_col = "time")
 \item{time_col}{Character. Name of the column with time variable. Optional with default "time".}
 }
 \value{
-A named vector with the \emph{F-value} of the Redundancy Analysis and its p-value based on 999 permutations.
+An object of class \code{mv_trend}, a named list with vector
+\itemize{
+\item \code{anova}: A data.frame with the \emph{F-value} of the Redundancy Analysis and its p-value based on 999 permutations.
+\item \code{rda}: An object of class \code{rda} with the scores of the RDA.
+\item \code{time}: A vector with the time variable used in the RDA.
+}
 }
 \description{
 Perform Redundancy Analysis on species abundances and time to assess community level trends
+}
+\details{
+This function estimates temporal trends in abundance at the community level by conducting Redundanncy Analysis (RDA) on species abundances with time as an explanaroty variable.
 }
 \examples{
 require(detrending)
@@ -23,7 +31,19 @@ require(detrending)
 # Simulate community data with trends
 comm_df <- sim_mvcomm(trend_mean = 0.3, bimodal_trend = TRUE)
 
-# Estimate trend for each species and plot estimated trends
+# Estimate multivariate community trend
 trend_mv(comm_df$sim_data, time_col = "time")
 
+}
+\references{
+\itemize{
+\item 
+}
+}
+\author{
+Jan Lepš, \email{suspa@prf.jcu.cz}
+
+Aleš Lisner, \email{lisnea00@jcu.cz}
+
+Héctor Miranda-Cebrián, \email{hectorm94@gmail.com}
 }
