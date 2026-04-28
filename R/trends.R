@@ -259,8 +259,11 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
                          pch = 19,
                          col = i)
       }
-      
-      graphics::axis(2, at = seq_along(trends$taxa), labels = trends$taxa, las = 2)
+      #line break taxa names
+      labs <- gsub(pattern = " ", replacement = "\n", trends$taxa)
+      graphics::axis(2, at = seq_along(trends$taxa), 
+                     labels = labs, 
+                     las = 2)
       graphics::abline(v = 0, lty = "dashed") 
     }
     # reset graphics
@@ -338,9 +341,11 @@ plot.mv_trend <- function(x, ...) {
        yaxt = "n",
        xlim = 1.1 * range(rda_species[,1]))
   graphics::abline(v = 0, 
-                   lty = "dashed") 
+                   lty = "dashed")
+  # line break species names because they tend to clip the panel
+  labs <- gsub(pattern = " ", replacement = "\n", rownames(rda_species))
   graphics::axis(2, at = seq_along(rownames(rda_species)), 
-                 labels = rownames(rda_species), 
+                 labels = labs, 
                  las = 2)
   graphics::points(x = rda_species[,1], 
                    y = seq_along(rownames(rda_species)), 
