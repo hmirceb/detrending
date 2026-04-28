@@ -4,12 +4,14 @@
 \alias{plot_com}
 \title{Plot a community time series}
 \usage{
-plot_com(x, total = FALSE)
+plot_com(x, total = FALSE, title = NULL)
 }
 \arguments{
 \item{x}{A data.frame. A community matrix of abundances with time in rows and taxa in columns.}
 
 \item{total}{Boolean. Also plot the total abundance of the community by timestep. Default FALSE.}
+
+\item{title}{Character. Title for the plot. Default NULL.}
 }
 \value{
 A plot.

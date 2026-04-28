@@ -9,7 +9,8 @@ comm_trend(
   time_col = "time",
   method = "loglinear",
   offset = TRUE,
-  plot = FALSE
+  plot = FALSE,
+  title = NULL
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ comm_trend(
 \item{offset}{Boolean. Add a small offset to each species (1\% of its mean abundance) to avoid problems with log(0). Default TRUE.}
 
 \item{plot}{Boolean. Plot species abundances and their estimated trends. Default FALSE.}
+
+\item{title}{Character. Title for the plot. Default NULL.}
 }
 \value{
 A data.frame with the trend (in the natural logarithm scale) for each species in the community along with its variance and 95\% confidence interval.

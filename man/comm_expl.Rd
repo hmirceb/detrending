@@ -18,7 +18,7 @@ comm_expl(
 
 \item{by_timestep}{Boolean. Get community information at each time step. Default FALSE.}
 
-\item{total}{Character. Wether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annula diversity indices.}
+\item{total}{Character. Whether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annula diversity indices.}
 
 \item{community_col}{Character. Name of column with the community identifier.}
 

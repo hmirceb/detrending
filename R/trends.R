@@ -110,11 +110,12 @@ trend_loglinear  <- function(x, time = NULL){
 #'
 #' @param x A data.frame. A community matrix of species abundances with time in rows and taxa in columns. Optionally it can include community and time columns. 
 #' @param time_col Character. Name of the column with time variable. Optional with default "time".
-#'
+#' @param scale Boolean. Scale abundances to have mean 0 and standard deviation 1. Default TRUE.
+#' @param perm Numeric. Number of permutations for significance testing. Default 999.
 #' @details This function estimates temporal trends in abundance at the community level by conducting Redundanncy Analysis (RDA) on species abundances with time as an explanaroty variable.
 #'
 #' @returns An object of class `mv_trend`, a named list with three elements:
-#'  - `anova`: A data.frame with the *F-value* of the Redundancy Analysis and its p-value based on 999 permutations.
+#'  - `anova`: A data.frame with the *F-value* of the Redundancy Analysis and its p-value based on the number of permutations chosen.
 #'  
 #'  - `rda`: An object of class `rda` with the scores of the RDA.
 #'  
@@ -137,7 +138,7 @@ trend_loglinear  <- function(x, time = NULL){
 #' trend_mv(comm_df$sim_data, time_col = "time")
 #' 
 #' @export
-trend_mv <- function(x, time_col = "time"){
+trend_mv <- function(x, time_col = "time", scale = TRUE, perm = 999){
   # Check if a time column was specified for detrending methods and order rows
   x <- check_time(x, time_col = time_col, term = "var", rm = FALSE)
   
@@ -152,8 +153,8 @@ trend_mv <- function(x, time_col = "time"){
   rda_formula <- stats::as.formula(paste("comm", "~", time_col))
   
   # RDA
-  comm_rda <- vegan::rda(formula = as.formula(rda_formula), data = t)
-  rda_sign <- stats::anova(comm_rda, permutations = 999)
+  comm_rda <- vegan::rda(formula = as.formula(rda_formula), data = t, scale = scale)
+  rda_sign <- stats::anova(comm_rda, permutations = perm)
   # format anova output
   res <- c(rda_sign$F[1], NA, NA, NA, rda_sign$`Pr(>F)`[1])
   names(res) <- c("F", "trend", "l95", "u95", "p")

@@ -4,17 +4,21 @@
 \alias{trend_mv}
 \title{Perform Redundancy Analysis on species abundances and time to assess community level trends}
 \usage{
-trend_mv(x, time_col = "time")
+trend_mv(x, time_col = "time", scale = TRUE, perm = 999)
 }
 \arguments{
 \item{x}{A data.frame. A community matrix of species abundances with time in rows and taxa in columns. Optionally it can include community and time columns.}
 
 \item{time_col}{Character. Name of the column with time variable. Optional with default "time".}
+
+\item{scale}{Boolean. Scale abundances to have mean 0 and standard deviation 1. Default TRUE.}
+
+\item{perm}{Numeric. Number of permutations for significance testing. Default 999.}
 }
 \value{
 An object of class \code{mv_trend}, a named list with three elements:
 \itemize{
-\item \code{anova}: A data.frame with the \emph{F-value} of the Redundancy Analysis and its p-value based on 999 permutations.
+\item \code{anova}: A data.frame with the \emph{F-value} of the Redundancy Analysis and its p-value based on the number of permutations chosen.
 \item \code{rda}: An object of class \code{rda} with the scores of the RDA.
 \item \code{time}: A vector with the time variable used in the RDA.
 }
