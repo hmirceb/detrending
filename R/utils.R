@@ -175,7 +175,7 @@ is_even <- function(x) {
 #'
 #' @param x A data.frame. A community matrix of abundances with time in rows and taxa in columns.
 #' @param total Boolean. Also plot the total abundance of the community by timestep. Default FALSE.
-#' 
+#' @param title Character. Title for the plot. Default NULL.
 #' @returns A plot.
 #' 
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
@@ -188,7 +188,7 @@ is_even <- function(x) {
 #' plot_com(comm_data$sim_data)
 #' 
 #' @export
-plot_com <- function(x, total = FALSE) {
+plot_com <- function(x, total = FALSE, title = NULL) {
   if ( isTRUE(total) ) {
     # Plot total abundance
     plot(y = rowSums(x),
@@ -215,6 +215,7 @@ plot_com <- function(x, total = FALSE) {
          ylim = c(min(x), max(x)),
          xlab = "Time",
          ylab = "Abundance")
+    title(title, adj = 0, line = 0.5)
     # Add additional points
     for (i in 2:ncol(x)) {
       graphics::points(y = x[,i],
@@ -263,4 +264,19 @@ warn_once <- function(expr) {
       invokeRestart("muffleWarning")
     }
   )
+}
+
+#' Short species names for plots 
+#'
+#' @noRd
+short_names <- function(x) {
+  # split by " " or "_"
+  split_names <- strsplit(x, " |_")
+  # put genus in upper case and only first letter
+  genera <- sapply(split_names, function(y) toupper(substring(y[1], 1, 1)))
+  # paste rest
+  others <- sapply(split_names, function(y) paste(y[-1], collapse = " "))
+  # paste together
+  split_pasted <- paste(genera, others, sep = " ")
+  return(split_pasted)
 }

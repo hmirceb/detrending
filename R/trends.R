@@ -171,7 +171,8 @@ trend_mv <- function(x, time_col = "time"){
 #' @param method Character. Method to estimate the trends, one of "dennis", "loglinear" or "rda". Default "dennis".
 #' @param offset Boolean. Add a small offset to each species (1% of its mean abundance) to avoid problems with log(0). Default TRUE.
 #' @param plot Boolean. Plot species abundances and their estimated trends. Default FALSE. 
-#'
+#' @param title Character. Title for the plot. Default NULL.
+#' 
 #' @returns A data.frame with the trend (in the natural logarithm scale) for each species in the community along with its variance and 95% confidence interval.
 #' 
 #' @examples
@@ -183,7 +184,7 @@ trend_mv <- function(x, time_col = "time"){
 #' # Estimate trend for each species and plot them
 #' comm_trend(comm_df$sim_data, method = "loglinear", plot = TRUE)
 #' @export
-comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE, plot = FALSE){
+comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE, plot = FALSE, title = NULL){
   # Match variance function
   method_matched <- match.arg(method, choices = c("dennis", "loglinear", "rda"))
   
@@ -233,7 +234,7 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
       # panel layout
       graphics::layout(matrix(c(1,1,2,2,3), nrow = 1, ncol = 5, byrow = TRUE))
       # plot community
-      plot_com(x)
+      plot_com(x, title = title)
       # plot rda and trends
       plot(trends)
     }
@@ -242,7 +243,7 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
       # setup two panels
       graphics::layout(matrix(c(1,2), nrow = 1, ncol = 2, byrow = TRUE))
       # plot community
-      plot_com(x)
+      plot_com(x, title = title)
       # plot species trends
       plot(x = trends[1,]$trend, y = seq_along(trends$taxa)[1],
            xlim = c(min(trends$l95), max(trends$u95)),
@@ -250,7 +251,7 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
            pch = 19,
            col = 1,
            xlab = "Trend (log)",
-           ylab = "Taxon", 
+           ylab = "", 
            yaxt = "n")
       graphics::arrows(x0 = trends$l95, x1 = trends$u95, y0 = seq_along(trends$taxa),
                        code = 3, length = 0.05, angle = 90)
@@ -259,8 +260,8 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
                          pch = 19,
                          col = i)
       }
-      #line break taxa names
-      labs <- gsub(pattern = " ", replacement = "\n", trends$taxa)
+      # shorten taxa names
+      labs <- short_names(rownames(rda_species))
       graphics::axis(2, at = seq_along(trends$taxa), 
                      labels = labs, 
                      las = 2)
@@ -337,13 +338,14 @@ plot.mv_trend <- function(x, ...) {
        y = seq_along(rownames(rda_species)), 
        type = "n",
        xlab = "Trend (RDA1)",
-       ylab = "Taxon",
+       ylab = "",
        yaxt = "n",
        xlim = 1.1 * range(rda_species[,1]))
   graphics::abline(v = 0, 
                    lty = "dashed")
-  # line break species names because they tend to clip the panel
-  labs <- gsub(pattern = " ", replacement = "\n", rownames(rda_species))
+  # shorten species names
+  labs <- short_names(rownames(rda_species))
+  
   graphics::axis(2, at = seq_along(rownames(rda_species)), 
                  labels = labs, 
                  las = 2)
