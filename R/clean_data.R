@@ -239,7 +239,7 @@ clean_community_long <- function(x,
 #' @param taxa_col Character. Name of column with taxa names. Default "species".
 #' @param abundance_col Character. Name of column with abundance values. Default "abundance".
 #' @param na_zero Boolean. Replace missing values (NAs) with zeros (0). Default TRUE.
-#' @param filter_transient Boolean. Filter transient species Default TRUE.
+#' @param filter_transient Boolean. Filter transient species. Default FALSE.
 #' @param empty_years Boolean. Remove empty years. Default FALSE.
 #' @param threshold Numeric. Minimum proportion (between 0 and 1) of time points with valid data to consider a species as transient. Default 0.3.
 #'
@@ -273,7 +273,7 @@ clean_community <- function(x,
                             taxa_col = "species",
                             abundance_col = "abundance",
                             na_zero = TRUE,
-                            filter_transient = TRUE,
+                            filter_transient = FALSE,
                             empty_years = FALSE,
                             threshold = 0.3) {
   # Check input format
