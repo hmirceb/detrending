@@ -106,10 +106,11 @@ trend_loglinear  <- function(x, time = NULL){
   return(res)
 }
 
-#' Perform Redundancy Analysis on species abundances and time to assess community level trends
+#' Perform Redundancy Analysis on species abundances with time as explanatory variable to assess community level trends
 #'
 #' @param x A data.frame. A community matrix of species abundances with time in rows and taxa in columns. Optionally it can include community and time columns. 
 #' @param time_col Character. Name of the column with time variable. Optional with default "time".
+#' @param community_col Character. Name of column with the community identifier.
 #' @param scale Boolean. Scale abundances to have mean 0 and standard deviation 1. Default TRUE.
 #' @param perm Numeric. Number of permutations for significance testing. Default 999.
 #' @details This function estimates temporal trends in abundance at the community level by conducting Redundanncy Analysis (RDA) on species abundances with time as an explanaroty variable.
@@ -122,7 +123,7 @@ trend_loglinear  <- function(x, time = NULL){
 #'  - `time`: A vector with the time variable used in the RDA.
 #'
 #' @references
-#'  - 
+#'  - Legendre, P. and Legendre, L. (2012) Numerical Ecology. 3rd English ed. Elsevier.
 #'  
 #' @author Jan Lepš, \email{suspa@@prf.jcu.cz} 
 #' @author Aleš Lisner, \email{lisnea00@@jcu.cz}
@@ -153,7 +154,7 @@ trend_mv <- function(x, time_col = "time", community_col = "comm", scale = TRUE,
   rda_formula <- stats::as.formula(paste("comm", "~", time_col))
   
   # RDA
-  comm_rda <- vegan::rda(formula = as.formula(rda_formula), data = t, scale = scale)
+  comm_rda <- vegan::rda(formula = rda_formula, data = t, scale = scale)
   rda_sign <- stats::anova(comm_rda, permutations = perm)
   # format anova output
   res <- c(rda_sign$F[1], NA, NA, NA, rda_sign$`Pr(>F)`[1])
@@ -403,7 +404,8 @@ plot.mv_trend <- function(x, ...) {
        xlab = "Time (RDA1)", ylab = "Community composition (PC1)",
        xlim = 2 * c(range(rda_sites[,1]))) # adjust limits
   # add reference lines
-  graphics::abline(h = 0, lty = 3); abline(v = 0, lty = 3)
+  graphics::abline(h = 0, lty = 3)
+  graphics::abline(v = 0, lty = 3)
   # arrows from timestep to timestep
   for (i in 2:nrow(rda_sites)) {
     # get start and end of each arrow

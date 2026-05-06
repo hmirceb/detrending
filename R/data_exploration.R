@@ -63,7 +63,7 @@ pielou <- function(x) {
 #'
 #' @param x A data.frame. A community matrix of species abundance with years as rows and species as columns.
 #' @param by_timestep Boolean. Get community information at each time step. Default FALSE.
-#' @param total Character. Whether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annula diversity indices.  
+#' @param total Character. Whether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annual diversity indices.  
 #' @param community_col Character. Name of column with the community identifier.
 #' @param time_col Character. Name of column with time variable.
 #' @param trends Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.
@@ -71,9 +71,9 @@ pielou <- function(x) {
 #' @param q Numeric. A number between 0 and 1 indicating the abundance threshold to consider a species as dominant.
 #'  
 #' @returns A named list:
-#'  - `diversity`: A data.frame with several diversity metrics for each community.
-#'  - `trends`: A data.frame with the estimated mean abundance trends of the species in each community.
-#'  - `missing_dominants`: A data.frame with the species considered dominant in each species and the number of missing data points.
+#'  - `diversity`: A data.frame indicaitng the number of timesteps in each community, along with their species richness (S), Shannon's (H) and Pielou's indices (P).
+#'  - `trends`: A data.frame with the estimated mean abundance trends of the species in each community as returned by `comm_trend()`.
+#'  - `dominant_taxa`: A data.frame with the species considered dominant in each species and the number of missing data points in the time series.
 #'  
 #' @export
 comm_expl <- function(x,
@@ -131,10 +131,8 @@ comm_expl <- function(x,
       suppressMessages(
         dom_check <- check_dominants(c_com[sps_index], q = q)
       )
-      if( nrow(dom_check) > 0) {
-        dom_check <- cbind(comm = unique(c_com[, community_col]),
+      dom_check <- cbind(comm = unique(c_com[, community_col]),
                            dom_check)
-      }
       return(dom_check)
     }
     )
@@ -158,7 +156,7 @@ comm_expl <- function(x,
       # Get columns with species ids
       sps_index <- !colnames(c_com) %in% c(community_col, time_col)
       # Number of years
-      ny <- nrow(c_com[,sps_index])
+      nt <- nrow(c_com[,sps_index])
       
       if ( isTRUE(by_timestep) ) {
         # Species richness
@@ -203,7 +201,7 @@ comm_expl <- function(x,
         }
         # Format results into df
         res <- data.frame(comm = unique(c_com[, community_col]),
-                          ny = ny, 
+                          nt = nt, 
                           S = S, 
                           H = H, 
                           J = J)
@@ -230,13 +228,13 @@ comm_expl <- function(x,
   # Create resulting list 
   if ( isTRUE(trends) ) {
     if ( isTRUE(check_dominants) ) {
-      res_list <- list(diversity = info_df, trends = trends_df, missing_dominants = dom_check)
+      res_list <- list(diversity = info_df, trends = trends_df, dominant_taxa = dom_check)
     } else {
       res_list <- list(diversity = info_df, trends = trends_df) 
     }
   } else {
     if ( isTRUE(check_dominants) ) {
-      res_list <- list(diversity = info_df, missing_dominants = dom_check)
+      res_list <- list(diversity = info_df, dominant_taxa = dom_check)
     } else {
       res_list <- list(diversity = info_df) 
     }

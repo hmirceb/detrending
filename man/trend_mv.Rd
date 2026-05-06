@@ -2,7 +2,7 @@
 % Please edit documentation in R/trends.R
 \name{trend_mv}
 \alias{trend_mv}
-\title{Perform Redundancy Analysis on species abundances and time to assess community level trends}
+\title{Perform Redundancy Analysis on species abundances with time as explanatory variable to assess community level trends}
 \usage{
 trend_mv(
   x,
@@ -17,6 +17,8 @@ trend_mv(
 
 \item{time_col}{Character. Name of the column with time variable. Optional with default "time".}
 
+\item{community_col}{Character. Name of column with the community identifier.}
+
 \item{scale}{Boolean. Scale abundances to have mean 0 and standard deviation 1. Default TRUE.}
 
 \item{perm}{Numeric. Number of permutations for significance testing. Default 999.}
@@ -30,7 +32,7 @@ An object of class \code{mv_trend}, a named list with three elements:
 }
 }
 \description{
-Perform Redundancy Analysis on species abundances and time to assess community level trends
+Perform Redundancy Analysis on species abundances with time as explanatory variable to assess community level trends
 }
 \details{
 This function estimates temporal trends in abundance at the community level by conducting Redundanncy Analysis (RDA) on species abundances with time as an explanaroty variable.
@@ -47,7 +49,7 @@ trend_mv(comm_df$sim_data, time_col = "time")
 }
 \references{
 \itemize{
-\item 
+\item Legendre, P. and Legendre, L. (2012) Numerical Ecology. 3rd English ed. Elsevier.
 }
 }
 \author{

@@ -139,32 +139,34 @@ get_dominants <- function(x, q = 0.9, plot = FALSE) {
 #' @author Héctor Miranda-Cebrián, \email{hectorm94@@gmail.com}
 #' 
 #' @noRd
-check_dominants <- function(x, q = 0.9) {
+check_dominants <-  function(x, q = 0.9) {
   # Get dominant species
   doms <- get_dominants(x = x, q = q, plot = FALSE)
   doms <- doms[doms$dominant == "yes",]$taxon
   ab_doms <- x[,colnames(x) %in% doms]
   # Check if they have missing data
   if( length(doms) == 1 ) {
-    miss <- which(ab_doms == 0 | is.na(ab_doms))
+    miss <- sum(ab_doms == 0 | is.na(ab_doms))
     with_missing <- data.frame(taxon = doms, 
-                               missing_t = ifelse(length(miss) == 0, 0, miss))
+                               n_missing = miss)
   } else {
     miss <- apply(ab_doms, 2, 
-                  function(y) which(y == 0 | is.na(y)),
-                  simplify = FALSE)
-    with_missing <- data.frame(taxon = rep(names(miss), sapply(miss, length)), 
-                               missing_t = unlist(miss))
+                  function(y) sum(y == 0 | is.na(y)),
+                  simplify = TRUE)
+    with_missing <- data.frame(taxon = names(miss), 
+                               n_missing = miss)
     rownames(with_missing) <- NULL # remove row names
   }
+  
   # Get names of species
-  missing_names <- unique(with_missing$taxon)
+  missing_names <- unique(with_missing[with_missing$n_missing > 0,]$taxon)
   if( length(miss) == 0) {
     message("No dominant species with missing values.")
+    return(with_missing)
   } else {
     message(paste0("The following dominant species have missing values: ",
                    paste(missing_names, collapse = ", ")))
-    return(with_missing)
+    return(rbind(with_missing))
   }
 }
 

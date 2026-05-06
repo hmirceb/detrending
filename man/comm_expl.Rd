@@ -20,7 +20,7 @@ comm_expl(
 
 \item{by_timestep}{Boolean. Get community information at each time step. Default FALSE.}
 
-\item{total}{Character. Whether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annula diversity indices.}
+\item{total}{Character. Whether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annual diversity indices.}
 
 \item{community_col}{Character. Name of column with the community identifier.}
 
@@ -35,9 +35,9 @@ comm_expl(
 \value{
 A named list:
 \itemize{
-\item \code{diversity}: A data.frame with several diversity metrics for each community.
-\item \code{trends}: A data.frame with the estimated mean abundance trends of the species in each community.
-\item \code{missing_dominants}: A data.frame with the species considered dominant in each species and the number of missing data points.
+\item \code{diversity}: A data.frame indicaitng the number of timesteps in each community, along with their species richness (S), Shannon's (H) and Pielou's indices (P).
+\item \code{trends}: A data.frame with the estimated mean abundance trends of the species in each community as returned by \code{comm_trend()}.
+\item \code{dominant_taxa}: A data.frame with the species considered dominant in each species and the number of missing data points in the time series.
 }
 }
 \description{
