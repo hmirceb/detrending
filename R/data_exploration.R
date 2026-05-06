@@ -67,17 +67,23 @@ pielou <- function(x) {
 #' @param community_col Character. Name of column with the community identifier.
 #' @param time_col Character. Name of column with time variable.
 #' @param trends Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.
-#'
+#' @param check_dominants Boolean. Check if dominant species according to threshold *q* have missing data. Default FALSE.
+#' @param q Numeric. A number between 0 and 1 indicating the abundance threshold to consider a species as dominant.
+#'  
 #' @returns A named list:
 #'  - `diversity`: A data.frame with several diversity metrics for each community.
 #'  - `trends`: A data.frame with the estimated mean abundance trends of the species in each community.
+#'  - `missing_dominants`: A data.frame with the species considered dominant in each species and the number of missing data points.
+#'  
 #' @export
 comm_expl <- function(x,
-                      by_timestep = FALSE,
-                      total = "average",
-                      community_col = "comm",
-                      time_col = "time",
-                      trends = FALSE){
+                       by_timestep = FALSE,
+                       total = "average",
+                       community_col = "comm",
+                       time_col = "time",
+                       trends = FALSE,
+                       check_dominants = FALSE,
+                       q = 0.7){
   # Check arguments
   if( !total %in% c("average", "overall") ) {
     stop("Argument 'total' must be one of 'average' or 'overall'")
@@ -91,11 +97,11 @@ comm_expl <- function(x,
     x <- cbind(comm = as.character(rep(1, times = nrow(x))), x)
   }
   
-  # split data by community (or community and time step)
+  # split data by community
   c_list <- split(x, f = as.character(x[, community_col]))
   
+  # Estimate trends (comm_trend already checks the time column)
   if ( isTRUE(trends) ) {
-    # Estimate trends (comm_trend already checks the time column)
     trends_df <- lapply(c_list, function(t_com){
       sps_index <- !colnames(t_com) %in% c(community_col, time_col)
       cbind(comm = unique(t_com[, community_col]),
@@ -105,21 +111,57 @@ comm_expl <- function(x,
     }
     )
     trends_df <- do.call("rbind", trends_df)
+    colnames(trends_df)[1] <- community_col
     rownames(trends_df) <- NULL
   }
   
-  # Get info per community
-  info_by_comm <- warn_once( # avoid a warnring for each comm if time_col is missing
-    lapply(c_list, function(c_com){
-      if ( isTRUE(by_timestep) ) {
-        # Check time column or add one if missing
+  # Check dominants with missing values
+  if (isTRUE(check_dominants) ) {
+    dom_check <-lapply(c_list, function(c_com) {
+      # Check time column or add one if missing
+      suppressWarnings(
         c_com <- check_time(c_com, time_col = time_col, term = "two", rm = FALSE)
-        c_com <- remove_empty_sps(c_com, time_col = time_col, community_col = community_col)
-        # Get columns with community ids
-        sps_index <- !colnames(c_com) %in% c(community_col, time_col)
-        # Number of years
-        ny <- nrow(c_com[,sps_index])
-        # Average species richness
+      )
+      # Remove species with no abundance
+      c_com <- remove_empty_sps(c_com, time_col = time_col, community_col = community_col)
+      # Get columns with species ids
+      sps_index <- !colnames(c_com) %in% c(community_col, time_col)
+      
+      # Check if dominant species have missing years
+      suppressMessages(
+        dom_check <- check_dominants(c_com[sps_index], q = q)
+      )
+      if( nrow(dom_check) > 0) {
+        dom_check <- cbind(comm = unique(c_com[, community_col]),
+                           dom_check)
+      }
+      return(dom_check)
+    }
+    )
+    dom_check <- do.call("rbind", dom_check)
+    rownames(dom_check) <- NULL
+    colnames(dom_check)[1] <- community_col
+    
+    if( nrow(dom_check) == 0){
+      dom_check <- "No dominant species with missing values."
+    }
+  }
+  
+  # Get info per community
+  info_by_comm <- warn_once( # avoid a warning for each comm if time_col is missing
+    lapply(c_list, function(c_com){
+      # Check time column or add one if missing
+      c_com <- check_time(c_com, time_col = time_col, term = "two", rm = FALSE)
+      # Remove species with no abundance
+      c_com <- remove_empty_sps(c_com, time_col = time_col, community_col = community_col)
+      
+      # Get columns with species ids
+      sps_index <- !colnames(c_com) %in% c(community_col, time_col)
+      # Number of years
+      ny <- nrow(c_com[,sps_index])
+      
+      if ( isTRUE(by_timestep) ) {
+        # Species richness
         S <- apply(c_com[,sps_index], MARGIN = 1, FUN = richness)
         # Shannon's index
         H <- apply(c_com[,sps_index], MARGIN = 1, FUN = shannon)
@@ -131,14 +173,9 @@ comm_expl <- function(x,
                           S = S,
                           H = H, 
                           J = J)
-      } else {
-        # remove columns with empty species (just in case)
-        c_com <- remove_empty_sps(c_com, time_col = time_col, community_col = community_col)
-        # Get columns with community ids
-        sps_index <- !colnames(c_com) %in% c(community_col, time_col)
-        # Number of years
-        ny <- nrow(c_com[,sps_index])
+        colnames(res)[1:2] <- c(community_col, time_col)
         
+      } else {
         # Calculate diversity from average annual diversity values 
         if( total == "average" ) {
           # Average species richness
@@ -170,11 +207,13 @@ comm_expl <- function(x,
                           S = S, 
                           H = H, 
                           J = J)
+        colnames(res)[1] <- community_col
       }
       return(res)
     }
     )
   )
+  
   # Join community-wise results into single df
   info_df <- do.call("rbind", info_by_comm)
   # Remove row names
@@ -190,9 +229,17 @@ comm_expl <- function(x,
   
   # Create resulting list 
   if ( isTRUE(trends) ) {
-    res_list <- list(diversity = info_df, trends = trends_df)
+    if ( isTRUE(check_dominants) ) {
+      res_list <- list(diversity = info_df, trends = trends_df, missing_dominants = dom_check)
+    } else {
+      res_list <- list(diversity = info_df, trends = trends_df) 
+    }
   } else {
-    res_list <- list(diversity = info_df)
+    if ( isTRUE(check_dominants) ) {
+      res_list <- list(diversity = info_df, missing_dominants = dom_check)
+    } else {
+      res_list <- list(diversity = info_df) 
+    }
   }
   
   return(res_list)

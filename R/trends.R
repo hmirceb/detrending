@@ -213,7 +213,7 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
     trends <- trend_func(x = x, time_col = time_col)
     linear_trends <- as.data.frame(
       cbind(
-        taxa = colnames(x), 
+        taxon = colnames(x), 
         as.data.frame(
           do.call("rbind", 
                   apply(x, MARGIN = 2, trend_loglinear, simplify = F)
@@ -227,7 +227,7 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
   if (method_matched %in% c("dennis", "loglinear")) {
     trends <- as.data.frame(
       cbind(
-        taxa = colnames(x), 
+        taxon = colnames(x), 
         as.data.frame(
           do.call("rbind", 
                   apply(x, MARGIN = 2, trend_func, simplify = F)
@@ -251,24 +251,24 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
       plot(trends)
       
       # plot species trends
-      plot(x = linear_trends[1,]$trend, y = seq_along(linear_trends$taxa)[1],
+      plot(x = linear_trends[1,]$trend, y = seq_along(linear_trends$taxon)[1],
            xlim = c(min(linear_trends$l95), max(linear_trends$u95)),
-           ylim = c(min(seq_along(linear_trends$taxa)), max(seq_along(linear_trends$taxa))),
+           ylim = c(min(seq_along(linear_trends$taxon)), max(seq_along(linear_trends$taxon))),
            pch = 19,
            col = 1,
            xlab = "Trend (log)",
            ylab = "", 
            yaxt = "n")
-      graphics::arrows(x0 = linear_trends$l95, x1 = linear_trends$u95, y0 = seq_along(linear_trends$taxa),
+      graphics::arrows(x0 = linear_trends$l95, x1 = linear_trends$u95, y0 = seq_along(linear_trends$taxon),
                        code = 3, length = 0.05, angle = 90)
       for (i in 2:nrow(linear_trends)) {
-        graphics::points(x = linear_trends[i,]$trend, y = seq_along(linear_trends$taxa)[i], 
+        graphics::points(x = linear_trends[i,]$trend, y = seq_along(linear_trends$taxon)[i], 
                          pch = 19,
                          col = i)
       }
       # shorten taxa names
-      labs <- short_names(linear_trends$taxa)
-      graphics::axis(2, at = seq_along(linear_trends$taxa), 
+      labs <- short_names(linear_trends$taxon)
+      graphics::axis(2, at = seq_along(linear_trends$taxon), 
                      labels = labs, 
                      las = 2)
       graphics::abline(v = 0, lty = "dashed") 
@@ -280,24 +280,24 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
       # plot community
       plot_com(x, title = title)
       # plot species trends
-      plot(x = trends[1,]$trend, y = seq_along(trends$taxa)[1],
+      plot(x = trends[1,]$trend, y = seq_along(trends$taxon)[1],
            xlim = c(min(trends$l95), max(trends$u95)),
-           ylim = c(min(seq_along(trends$taxa)), max(seq_along(trends$taxa))),
+           ylim = c(min(seq_along(trends$taxon)), max(seq_along(trends$taxon))),
            pch = 19,
            col = 1,
            xlab = "Trend (log)",
            ylab = "", 
            yaxt = "n")
-      graphics::arrows(x0 = trends$l95, x1 = trends$u95, y0 = seq_along(trends$taxa),
+      graphics::arrows(x0 = trends$l95, x1 = trends$u95, y0 = seq_along(trends$taxon),
                        code = 3, length = 0.05, angle = 90)
       for (i in 2:nrow(trends)) {
-        graphics::points(x = trends[i,]$trend, y = seq_along(trends$taxa)[i], 
+        graphics::points(x = trends[i,]$trend, y = seq_along(trends$taxon)[i], 
                          pch = 19,
                          col = i)
       }
       # shorten taxa names
-      labs <- short_names(trends$taxa)
-      graphics::axis(2, at = seq_along(trends$taxa), 
+      labs <- short_names(trends$taxon)
+      graphics::axis(2, at = seq_along(trends$taxon), 
                      labels = labs, 
                      las = 2)
       graphics::abline(v = 0, lty = "dashed") 

@@ -10,7 +10,9 @@ comm_expl(
   total = "average",
   community_col = "comm",
   time_col = "time",
-  trends = FALSE
+  trends = FALSE,
+  check_dominants = FALSE,
+  q = 0.7
 )
 }
 \arguments{
@@ -25,12 +27,17 @@ comm_expl(
 \item{time_col}{Character. Name of column with time variable.}
 
 \item{trends}{Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.}
+
+\item{check_dominants}{Boolean. Check if dominant species according to threshold \emph{q} have missing data. Default FALSE.}
+
+\item{q}{Numeric. A number between 0 and 1 indicating the abundance threshold to consider a species as dominant.}
 }
 \value{
 A named list:
 \itemize{
 \item \code{diversity}: A data.frame with several diversity metrics for each community.
 \item \code{trends}: A data.frame with the estimated mean abundance trends of the species in each community.
+\item \code{missing_dominants}: A data.frame with the species considered dominant in each species and the number of missing data points.
 }
 }
 \description{
