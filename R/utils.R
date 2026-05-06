@@ -213,7 +213,7 @@ plot_com <- function(x, total = FALSE, title = NULL) {
          ylab = "Abundance")
     # Add additional points
     for (i in 1:ncol(x)) {
-      graphics::points(y = x[,i],
+      graphics::lines(y = x[,i],
                        x = 1:nrow(x),
                        pch = 19,
                        col = i)
@@ -222,6 +222,7 @@ plot_com <- function(x, total = FALSE, title = NULL) {
     # Plot first species
     plot(y = x[,1],
          x = 1:nrow(x),
+         type = "l",
          pch = 19,
          col = 1,
          ylim = c(min(x, na.rm = T), max(x, na.rm = T)),
@@ -230,7 +231,7 @@ plot_com <- function(x, total = FALSE, title = NULL) {
     title(title, adj = 0, line = 0.5)
     # Add additional points
     for (i in 2:ncol(x)) {
-      graphics::points(y = x[,i],
+      graphics::lines(y = x[,i],
                        x = 1:nrow(x),
                        pch = 19,
                        col = i)

@@ -170,8 +170,8 @@ trend_mv <- function(x, time_col = "time", community_col = "comm", scale = TRUE,
 #'
 #' @param x A data.frame. A community matrix of species abundances with time in rows and taxa in columns. Optionally it can include community and time columns. 
 #' @param time_col Character. Name of the column with time variable. Optional with default "time".
+#' @param community_col Character. Name of column with the community identifier.
 #' @param method Character. Method to estimate the trends, one of "dennis", "loglinear" or "rda". Default "dennis".
-#' @param offset Boolean. Add a small offset to each species (1% of its mean abundance) to avoid problems with log(0). Default TRUE.
 #' @param plot Boolean. Plot species abundances and their estimated trends. Default FALSE. 
 #' @param title Character. Title for the plot. Default NULL.
 #' 
@@ -186,7 +186,7 @@ trend_mv <- function(x, time_col = "time", community_col = "comm", scale = TRUE,
 #' # Estimate trend for each species and plot them
 #' comm_trend(comm_df$sim_data, method = "loglinear", plot = TRUE)
 #' @export
-comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE, plot = FALSE, title = NULL){
+comm_trend <- function(x, time_col = "time", community_col = "comm", method = "loglinear", plot = FALSE, title = NULL){
   # Match trend estimation function
   method_matched <- match.arg(method, choices = c("dennis", "loglinear", "rda"))
   
@@ -203,15 +203,15 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
   # Replace NAs with 0 and remove columns (species) with 0 abundance across all years 
   x <- remove_empty_sps(x = x, time_col = time_col)
   
-  # Add offset to avoid problems with log(0) when estimating trends
-  if( isTRUE(offset) ){
-    z <- apply(x, 2, mean)*0.01
-    x <- sweep(x, 2, STATS = z, FUN = "+")
-  }
+  # remove community column
+  x <- x[,!colnames(x) %in% c(time_col, community_col)]
   
-  # Estimate trends using apropriate function (this is like this because mv function has different output format)
+  z <- apply(x, 2, mean)*0.01
+  x <- sweep(x, 2, STATS = z, FUN = "+")
+  
+  # Estimate trends using apropriate function (this is like this because rda has different output format)
   if (method_matched == "rda") {
-    trends <- trend_func(x = x, time_col = time_col)
+    trends <- trend_func(x = x, time_col = time_col, community_col = community_col)
     linear_trends <- as.data.frame(
       cbind(
         taxon = colnames(x), 
@@ -245,9 +245,9 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
     # plot mv trends
     if (method_matched == "rda") {
       # panel layout
-      graphics::layout(matrix(c(1,1,2,2,3), nrow = 1, ncol = 5, byrow = TRUE))
+      graphics::layout(matrix(c(1,1,2,2), nrow = 1, ncol = 4, byrow = TRUE))
       # plot community
-      plot_com(x, title = title)
+      # plot_com(x, title = title)
       # plot rda and trends
       plot(trends)
       
@@ -462,5 +462,5 @@ plot.mv_trend <- function(x, ...) {
                    y1 = rda_species[,2],
                    x1 = spec_arrow,
                    col = seq_along(rownames(rda_species)),
-                   length = 0.1)
+                   length = 0.08)
 }
