@@ -316,80 +316,80 @@ comm_trend <- function(x, time_col = "time", method = "loglinear", offset = TRUE
   }
 }
 
-#' #' @export
-#' plot.mv_trend <- function(x, ...) {
-#'   # get community scores 
-#'   rda_sites <- vegan::scores(x$rda)$sites
-#'   # get species scores
-#'   rda_species <- vegan::scores(x$rda)$species
-#'   # empty plot
-#'   plot(x = rda_sites[,1], y = rda_sites[,2],
-#'        type = "n", 
-#'        xlab = "Time (RDA1)", ylab = "Community composition (PC1)",
-#'        xlim = 2 * c(range(rda_sites[,1]))) # adjust limits
-#'   # add reference lines
-#'   graphics::abline(h = 0, lty = 3)
-#'   graphics::abline(v = 0, lty = 3)
-#'   # arrows from timestep to timestep
-#'   for (i in 2:nrow(rda_sites)) {
-#'     # get start and end of each arrow
-#'     x0 <- rda_sites[i-1,1]
-#'     y0 <- rda_sites[i-1,2]
-#'     x1 <- rda_sites[i,1]
-#'     y1 <- rda_sites[i,2]
-#'     # only the last one is a proper arrow
-#'     angle <- ifelse(i == max(nrow(rda_sites)), 20, 0)
-#'     graphics::arrows(x0 = x0, y0 = y0, x1 = x1, y1 = y1,
-#'                      angle = angle, length = 0.1)
-#'   }
-#'   # add time steps with text and colored points
-#'   graphics::text(x = rda_sites[,1],
-#'                  y = rda_sites[,2], 
-#'                  labels = x$time, 
-#'                  pos = 3)
-#'   graphics::points(x = rda_sites[,1],
-#'                    y = rda_sites[,2], 
-#'                    pch = 21, 
-#'                    bg = "grey")
-#'   # add arrow indicating time direction
-#'   graphics::arrows(x0 = 0, 
-#'                    y0 = 0, 
-#'                    y1 = 0, 
-#'                    x1 = 1.8 * max(rda_sites[,1]), 
-#'                    col = "blue", 
-#'                    length = 0.1)
-#'   graphics::text(y = 0, 
-#'                  x = 1.8 * max(rda_sites[,1]), 
-#'                  labels = "time", 
-#'                  pos = 3, 
-#'                  col = "blue")
-#'   # F statistic and p value from permutation test
-#'   graphics::mtext(side = 3, 
-#'                   adj = 1, 
-#'                   text = paste0("F=", round(x$anova["F"], 3), ", p=", x$anova["p"]))
-#'   
-#'   # plot with species trends
-#'   plot(x = rda_species[,1], 
-#'        y = seq_along(rownames(rda_species)), 
-#'        type = "n",
-#'        xlab = "Trend (RDA1)",
-#'        ylab = "",
-#'        yaxt = "n",
-#'        xlim = 1.1 * range(rda_species[,1]))
-#'   graphics::abline(v = 0, 
-#'                    lty = "dashed")
-#'   # shorten species names
-#'   labs <- short_names(rownames(rda_species))
-#'   
-#'   graphics::axis(2, at = seq_along(rownames(rda_species)), 
-#'                  labels = labs, 
-#'                  las = 2)
-#'   graphics::points(x = rda_species[,1], 
-#'                    y = seq_along(rownames(rda_species)), 
-#'                    col = seq_along(rownames(rda_species)), 
-#'                    pch = 19,
-#'                    cex = 1.5)
-#' }
+# #' @export
+# plot.mv_trend <- function(x, ...) {
+#   # get community scores 
+#   rda_sites <- vegan::scores(x$rda)$sites
+#   # get species scores
+#   rda_species <- vegan::scores(x$rda)$species
+#   # empty plot
+#   plot(x = rda_sites[,1], y = rda_sites[,2],
+#        type = "n", 
+#        xlab = "Time (RDA1)", ylab = "Community composition (PC1)",
+#        xlim = 2 * c(range(rda_sites[,1]))) # adjust limits
+#   # add reference lines
+#   graphics::abline(h = 0, lty = 3)
+#   graphics::abline(v = 0, lty = 3)
+#   # arrows from timestep to timestep
+#   for (i in 2:nrow(rda_sites)) {
+#     # get start and end of each arrow
+#     x0 <- rda_sites[i-1,1]
+#     y0 <- rda_sites[i-1,2]
+#     x1 <- rda_sites[i,1]
+#     y1 <- rda_sites[i,2]
+#     # only the last one is a proper arrow
+#     angle <- ifelse(i == max(nrow(rda_sites)), 20, 0)
+#     graphics::arrows(x0 = x0, y0 = y0, x1 = x1, y1 = y1,
+#                      angle = angle, length = 0.1)
+#   }
+#   # add time steps with text and colored points
+#   graphics::text(x = rda_sites[,1],
+#                  y = rda_sites[,2], 
+#                  labels = x$time, 
+#                  pos = 3)
+#   graphics::points(x = rda_sites[,1],
+#                    y = rda_sites[,2], 
+#                    pch = 21, 
+#                    bg = "grey")
+#   # add arrow indicating time direction
+#   graphics::arrows(x0 = 0, 
+#                    y0 = 0, 
+#                    y1 = 0, 
+#                    x1 = 1.8 * max(rda_sites[,1]), 
+#                    col = "blue", 
+#                    length = 0.1)
+#   graphics::text(y = 0, 
+#                  x = 1.8 * max(rda_sites[,1]), 
+#                  labels = "time", 
+#                  pos = 3, 
+#                  col = "blue")
+#   # F statistic and p value from permutation test
+#   graphics::mtext(side = 3, 
+#                   adj = 1, 
+#                   text = paste0("F=", round(x$anova["F"], 3), ", p=", x$anova["p"]))
+#   
+#   # plot with species trends
+#   plot(x = rda_species[,1], 
+#        y = seq_along(rownames(rda_species)), 
+#        type = "n",
+#        xlab = "Trend (RDA1)",
+#        ylab = "",
+#        yaxt = "n",
+#        xlim = 1.1 * range(rda_species[,1]))
+#   graphics::abline(v = 0, 
+#                    lty = "dashed")
+#   # shorten species names
+#   labs <- short_names(rownames(rda_species))
+#   
+#   graphics::axis(2, at = seq_along(rownames(rda_species)), 
+#                  labels = labs, 
+#                  las = 2)
+#   graphics::points(x = rda_species[,1], 
+#                    y = seq_along(rownames(rda_species)), 
+#                    col = seq_along(rownames(rda_species)), 
+#                    pch = 19,
+#                    cex = 1.5)
+# }
 
 #' @export
 plot.mv_trend <- function(x, ...) {

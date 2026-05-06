@@ -15,7 +15,6 @@ Description: A suite of tools for estimating community stability and its compone
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Imports:
   faux,
   gtools,
@@ -32,3 +31,4 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

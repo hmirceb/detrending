@@ -105,10 +105,10 @@ jenfish <- function(x,
 get_dominants <- function(x, q = 0.9, plot = FALSE) {
   # Sort species by their mean abundance across years
   sps_sorted <- sort(apply(x, 2,
-                           function(y) mean(y[y > 0])), decreasing = T)
+                           function(y) mean(y[y > 0], na.rm = TRUE)), decreasing = TRUE)
   
   # Get specified quantile
-  qu = stats::quantile(sps_sorted, probs = q)[1]
+  qu = stats::quantile(sps_sorted, probs = q, na.rm = TRUE)[1]
   # Make DF and specify dominant species
   df = data.frame(taxon = names(sps_sorted),
                   abund = sps_sorted, 
@@ -116,9 +116,13 @@ get_dominants <- function(x, q = 0.9, plot = FALSE) {
   # Plot
   if( isTRUE(plot) ){
     # Points
-    plot(df$abund, cex = 1.3, pch = 21, bg = df$dominant)
+    plot(df$abund, cex = 1.3, pch = 21, bg = df$dominant, 
+         ylim = c(min(df$abund, na.rm = TRUE), 1.1 * max(df$abund, na.rm = TRUE)))
     # Labels
-    graphics::text(sps_sorted, labels = short_names(names(sps_sorted)), cex=0.6, pos=1, col="red")
+    graphics::text(sps_sorted, labels = short_names(names(sps_sorted)), 
+                   cex=0.6, 
+                   pos=3,
+                   col="black")
     # Threshold line 
     graphics::abline(h = qu, lty = "dashed")
   }
@@ -139,22 +143,28 @@ check_dominants <- function(x, q = 0.9) {
   # Get dominant species
   doms <- get_dominants(x = x, q = q, plot = FALSE)
   doms <- doms[doms$dominant == "yes",]$taxon
+  ab_doms <- x[,colnames(x) %in% doms]
   # Check if they have missing data
-  if( length(doms) == 1) {
-    with_missing <- any( x[,colnames(x) %in% doms] == 0 )
-    names(with_missing) <- doms
+  if( length(doms) == 1 ) {
+    miss <- which(ab_doms == 0 | is.na(ab_doms))
+    with_missing <- data.frame(taxon = doms, 
+                               missing_t = ifelse(length(miss) == 0, 0, miss))
   } else {
-    with_missing <- apply(x[,colnames(x) %in% doms], 2, 
-                          function(y) any(y == 0))
+    miss <- apply(ab_doms, 2, 
+                  function(y) which(y == 0 | is.na(y)),
+                  simplify = FALSE)
+    with_missing <- data.frame(taxon = rep(names(miss), sapply(miss, length)), 
+                               missing_t = unlist(miss))
+    rownames(with_missing) <- NULL # remove row names
   }
-  
   # Get names of species
-  missing_names <- names(with_missing[with_missing])
-  if( length(missing_names) == 0) {
+  missing_names <- unique(with_missing$taxon)
+  if( length(miss) == 0) {
     message("No dominant species with missing values.")
   } else {
-    message("The following dominant species have missing values.")
-    return(missing_names)
+    message(paste0("The following dominant species have missing values: ",
+                   paste(missing_names, collapse = ", ")))
+    return(with_missing)
   }
 }
 
@@ -196,7 +206,7 @@ plot_com <- function(x, total = FALSE, title = NULL) {
          pch = 19,
          type = "l",
          lwd = 2,
-         ylim = c(min(x), max(rowSums(x))),
+         ylim = c(min(x, na.rm = T), max(rowSums(x), na.rm = T)),
          xlab = "Time",
          ylab = "Abundance")
     # Add additional points
@@ -212,7 +222,7 @@ plot_com <- function(x, total = FALSE, title = NULL) {
          x = 1:nrow(x),
          pch = 19,
          col = 1,
-         ylim = c(min(x), max(x)),
+         ylim = c(min(x, na.rm = T), max(x, na.rm = T)),
          xlab = "Time",
          ylab = "Abundance")
     title(title, adj = 0, line = 0.5)

@@ -12,7 +12,7 @@ clean_community(
   taxa_col = "species",
   abundance_col = "abundance",
   na_zero = TRUE,
-  filter_transient = TRUE,
+  filter_transient = FALSE,
   empty_years = FALSE,
   threshold = 0.3
 )
@@ -32,7 +32,7 @@ clean_community(
 
 \item{na_zero}{Boolean. Replace missing values (NAs) with zeros (0). Default TRUE.}
 
-\item{filter_transient}{Boolean. Filter transient species Default TRUE.}
+\item{filter_transient}{Boolean. Filter transient species. Default FALSE.}
 
 \item{empty_years}{Boolean. Remove empty years. Default FALSE.}
 

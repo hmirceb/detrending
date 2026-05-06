@@ -31,7 +31,7 @@ sim_mvcomm(
 
 \item{corr}{Numeric. Average correlation between populations.}
 
-\item{p}{Numeric. Dispersion parameter for a Dirichlet distribution. Controls the evenness of the community with lower values indicating less dominance.}
+\item{p}{Numeric. Dispersion parameter for a Dirichlet distribution. Controls the evenness of the community with lower values indicating more even communities.}
 
 \item{trend_mean}{Numeric. Mean of the trend. Positive values indicate growth and negative ones, decline. Default 0 (no trend).}
 

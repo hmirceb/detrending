@@ -4,7 +4,13 @@
 \alias{trend_mv}
 \title{Perform Redundancy Analysis on species abundances and time to assess community level trends}
 \usage{
-trend_mv(x, time_col = "time", scale = TRUE, perm = 999)
+trend_mv(
+  x,
+  time_col = "time",
+  community_col = "comm",
+  scale = TRUE,
+  perm = 999
+)
 }
 \arguments{
 \item{x}{A data.frame. A community matrix of species abundances with time in rows and taxa in columns. Optionally it can include community and time columns.}
