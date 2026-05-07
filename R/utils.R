@@ -312,8 +312,9 @@ get_transient <- function(x, threshold = 0.3) {
   
   missing_n <- data.frame(taxon = names(missing),
                           n_missing = missing,
-                          p_missing = missing / nrow(x))
-  missing_n$transient <- ifelse(missing_n$p_missing > threshold, "x", "")
+                          p_missing = missing / nrow(x),
+                          n_years = nrow(x))
+  missing_n$transient <- ifelse(missing_n$p_missing >= threshold, "x", "")
   
   rownames(missing_n) <- NULL
   return(missing_n)
