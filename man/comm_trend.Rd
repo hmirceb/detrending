@@ -7,8 +7,8 @@
 comm_trend(
   x,
   time_col = "time",
+  community_col = "comm",
   method = "loglinear",
-  offset = TRUE,
   plot = FALSE,
   title = NULL
 )
@@ -18,9 +18,9 @@ comm_trend(
 
 \item{time_col}{Character. Name of the column with time variable. Optional with default "time".}
 
-\item{method}{Character. Method to estimate the trends, one of "dennis", "loglinear" or "rda". Default "dennis".}
+\item{community_col}{Character. Name of column with the community identifier.}
 
-\item{offset}{Boolean. Add a small offset to each species (1\% of its mean abundance) to avoid problems with log(0). Default TRUE.}
+\item{method}{Character. Method to estimate the trends, one of "dennis", "loglinear" or "rda". Default "dennis".}
 
 \item{plot}{Boolean. Plot species abundances and their estimated trends. Default FALSE.}
 

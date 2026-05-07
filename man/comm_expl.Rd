@@ -10,9 +10,11 @@ comm_expl(
   total = "average",
   community_col = "comm",
   time_col = "time",
-  trends = FALSE,
+  check_trends = FALSE,
   check_dominants = FALSE,
-  q = 0.7
+  dominant_threshold = 0.7,
+  check_transient = FALSE,
+  transient_threshold = 0.3
 )
 }
 \arguments{
@@ -26,11 +28,15 @@ comm_expl(
 
 \item{time_col}{Character. Name of column with time variable.}
 
-\item{trends}{Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.}
+\item{check_trends}{Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.}
 
-\item{check_dominants}{Boolean. Check if dominant species according to threshold \emph{q} have missing data. Default FALSE.}
+\item{check_dominants}{Boolean. Check if dominant species according to a certain threshold have missing data. Default FALSE.}
 
-\item{q}{Numeric. A number between 0 and 1 indicating the abundance threshold to consider a species as dominant.}
+\item{dominant_threshold}{Numeric. A number between 0 and 1 indicating the abundance threshold to consider a species as dominant.}
+
+\item{check_transient}{Boolean. Check the number and proportion of missing data for all species and classify them according to a threshold. Default FALSE.}
+
+\item{transient_threshold}{Numeric. A number between 0 and 1 indicating the acceptable proportion of missing years per species.}
 }
 \value{
 A named list:
@@ -38,6 +44,7 @@ A named list:
 \item \code{diversity}: A data.frame indicaitng the number of timesteps in each community, along with their species richness (S), Shannon's (H) and Pielou's indices (P).
 \item \code{trends}: A data.frame with the estimated mean abundance trends of the species in each community as returned by \code{comm_trend()}.
 \item \code{dominant_taxa}: A data.frame with the species considered dominant in each species and the number of missing data points in the time series.
+\item \code{transient_taxa}: A data.frame with the number and proportion of missing data for each species and if this proportion is below a certain threshold.
 }
 }
 \description{

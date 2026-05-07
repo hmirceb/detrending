@@ -66,14 +66,17 @@ pielou <- function(x) {
 #' @param total Character. Whether to compute diversity indices from the average relative abundance of species across years (overall) or the average of annual diversity indices.  
 #' @param community_col Character. Name of column with the community identifier.
 #' @param time_col Character. Name of column with time variable.
-#' @param trends Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.
-#' @param check_dominants Boolean. Check if dominant species according to threshold *q* have missing data. Default FALSE.
-#' @param q Numeric. A number between 0 and 1 indicating the abundance threshold to consider a species as dominant.
+#' @param check_trends Boolean. Check for trends in species using linear regression on log-transformed abundances. Default FALSE.
+#' @param check_dominants Boolean. Check if dominant species according to a certain threshold have missing data. Default FALSE.
+#' @param dominant_threshold Numeric. A number between 0 and 1 indicating the abundance threshold to consider a species as dominant.
+#' @param check_transient Boolean. Check the number and proportion of missing data for all species and classify them according to a threshold. Default FALSE.
+#' @param transient_threshold Numeric. A number between 0 and 1 indicating the acceptable proportion of missing years per species.
 #'  
 #' @returns A named list:
 #'  - `diversity`: A data.frame indicaitng the number of timesteps in each community, along with their species richness (S), Shannon's (H) and Pielou's indices (P).
 #'  - `trends`: A data.frame with the estimated mean abundance trends of the species in each community as returned by `comm_trend()`.
 #'  - `dominant_taxa`: A data.frame with the species considered dominant in each species and the number of missing data points in the time series.
+#'  - `transient_taxa`: A data.frame with the number and proportion of missing data for each species and if this proportion is below a certain threshold. 
 #'  
 #' @export
 comm_expl <- function(x,
@@ -81,9 +84,11 @@ comm_expl <- function(x,
                        total = "average",
                        community_col = "comm",
                        time_col = "time",
-                       trends = FALSE,
+                       check_trends = FALSE,
                        check_dominants = FALSE,
-                       q = 0.7){
+                       dominant_threshold = 0.7,
+                       check_transient = FALSE,
+                       transient_threshold = 0.3){
   # Check arguments
   if( !total %in% c("average", "overall") ) {
     stop("Argument 'total' must be one of 'average' or 'overall'")
@@ -101,7 +106,7 @@ comm_expl <- function(x,
   c_list <- split(x, f = as.character(x[, community_col]))
   
   # Estimate trends (comm_trend already checks the time column)
-  if ( isTRUE(trends) ) {
+  if ( isTRUE(check_trends) ) {
     trends_df <- lapply(c_list, function(t_com){
       sps_index <- !colnames(t_com) %in% c(community_col, time_col)
       cbind(comm = unique(t_com[, community_col]),
@@ -113,6 +118,8 @@ comm_expl <- function(x,
     trends_df <- do.call("rbind", trends_df)
     colnames(trends_df)[1] <- community_col
     rownames(trends_df) <- NULL
+  } else {
+    trends_df <- NULL
   }
   
   # Check dominants with missing values
@@ -129,7 +136,7 @@ comm_expl <- function(x,
       
       # Check if dominant species have missing years
       suppressMessages(
-        dom_check <- check_dominants(c_com[sps_index], q = q)
+        dom_check <- check_dominants(c_com[sps_index], q = dominant_threshold)
       )
       dom_check <- cbind(comm = unique(c_com[, community_col]),
                            dom_check)
@@ -140,9 +147,35 @@ comm_expl <- function(x,
     rownames(dom_check) <- NULL
     colnames(dom_check)[1] <- community_col
     
-    if( nrow(dom_check) == 0){
+    if( nrow(dom_check) == 0 ){
       dom_check <- "No dominant species with missing values."
     }
+  } else {
+    dom_check <- NULL
+  }
+  
+  # Check transient species
+  if (isTRUE(check_transient) ) {
+    transient_check <-lapply(c_list, function(c_com) {
+      # Check time column or add one if missing
+      suppressWarnings(
+        c_com <- check_time(c_com, time_col = time_col, term = "two", rm = FALSE)
+      )
+      # Get columns with species ids
+      sps_index <- !colnames(c_com) %in% c(community_col, time_col)
+      
+      # Check proportion of missing years by species
+      transient_check <- get_transient(x = c_com[,sps_index], threshold = transient_threshold)
+      transient_check <- cbind(comm = unique(c_com[, community_col]),
+                               transient_check)
+      return(transient_check)
+    }
+    )
+    transient_check <- do.call("rbind", transient_check)
+    rownames(transient_check) <- NULL
+    colnames(transient_check)[1] <- community_col
+  } else {
+    transient_check <- NULL
   }
   
   # Get info per community
@@ -226,19 +259,10 @@ comm_expl <- function(x,
   }
   
   # Create resulting list 
-  if ( isTRUE(trends) ) {
-    if ( isTRUE(check_dominants) ) {
-      res_list <- list(diversity = info_df, trends = trends_df, dominant_taxa = dom_check)
-    } else {
-      res_list <- list(diversity = info_df, trends = trends_df) 
-    }
-  } else {
-    if ( isTRUE(check_dominants) ) {
-      res_list <- list(diversity = info_df, dominant_taxa = dom_check)
-    } else {
-      res_list <- list(diversity = info_df) 
-    }
-  }
+  res_list <- list(diversity = info_df, 
+                   trends = trends_df, 
+                   dominant_taxa = dom_check,
+                   transient_taxa = transient_check)
   
   return(res_list)
 }

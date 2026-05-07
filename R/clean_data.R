@@ -63,11 +63,10 @@ clean_community_wide <- function(x,
       # Get indices of species columns
       sps_index <- !colnames(y) %in% c(community_col, time_col)
       # Get number of zeros (0) and missing years by species
-      missing <- colSums(y[, sps_index] == 0 | is.na(y[, sps_index]))/nrow(y[, sps_index])
+      missing <- get_transient(x = y[, sps_index], threshold = threshold)
       
       # Get transient species (missing propoportion higher than threshold)
-      transient_sps <- which(missing > threshold)+
-        length(c(community_col, time_col)) # this offsets the missing comm and time columns
+      transient_sps <- missing[missing$transient == "x",]$taxon
       
       # If no transient species are detected keep everything
       if( length(transient_sps) == 0 ){ 

@@ -105,12 +105,13 @@ jenfish <- function(x,
 get_dominants <- function(x, q = 0.9, plot = FALSE) {
   # Sort species by their mean abundance across years
   sps_sorted <- sort(apply(x, 2,
-                           function(y) mean(y[y > 0], na.rm = TRUE)), decreasing = TRUE)
+                           function(y) mean(y[y > 0], na.rm = TRUE)), 
+                     decreasing = TRUE)
   
   # Get specified quantile
-  qu = stats::quantile(sps_sorted, probs = q, na.rm = TRUE)[1]
+  qu <- stats::quantile(sps_sorted, probs = q, na.rm = TRUE)[1]
   # Make DF and specify dominant species
-  df = data.frame(taxon = names(sps_sorted),
+  df <- data.frame(taxon = names(sps_sorted),
                   abund = sps_sorted, 
                   dominant = as.factor(ifelse(sps_sorted >= qu, "yes", "no")))
   # Plot
@@ -300,4 +301,20 @@ short_names <- function(x) {
   # paste together
   split_pasted <- paste(genera, others, sep = " ")
   return(split_pasted)
+}
+
+#' Identify transient species
+#'
+#' @noRd
+get_transient <- function(x, threshold = 0.3) {
+  # Get number of zeros (0) and missing years by species
+  missing <- colSums(x == 0 | is.na(x))
+  
+  missing_n <- data.frame(taxon = names(missing),
+                          n_missing = missing,
+                          p_missing = missing / nrow(x))
+  missing_n$transient <- ifelse(missing_n$p_missing > threshold, "x", "")
+  
+  rownames(missing_n) <- NULL
+  return(missing_n)
 }
