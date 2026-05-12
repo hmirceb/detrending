@@ -209,6 +209,7 @@ plot_com <- function(x, total = FALSE, title = NULL) {
          pch = 19,
          type = "l",
          lwd = 2,
+         lty = "dashed",
          ylim = c(min(x, na.rm = T), max(rowSums(x), na.rm = T)),
          xlab = "Time",
          ylab = "Abundance")
