@@ -144,7 +144,7 @@ trend_mv <- function(x, time_col = "time", community_col = "comm", scale = TRUE,
   x <- check_time(x, time_col = time_col, term = "var", rm = FALSE)
   
   # Replace NAs with 0 and remove columns (species) with 0 abundance across all years 
-  x <- remove_empty_sps(x = x, time_col = time_col)
+  x <- remove_empty_sps(x = x, time_col = time_col, community_col = community_col)
   
   # prepare data matrices for RDA
   comm <- x[!colnames(x) %in% c(community_col, time_col)]
@@ -201,7 +201,7 @@ community_trends <- function(x, time_col = "time", community_col = "comm", metho
   x <- check_time(x, time_col = time_col, term = "var", rm = TRUE)
   
   # Replace NAs with 0 and remove columns (species) with 0 abundance across all years 
-  x <- remove_empty_sps(x = x, time_col = time_col)
+  x <- remove_empty_sps(x = x, time_col = time_col, community_col = community_col)
   
   # remove community column
   x <- x[,!colnames(x) %in% c(time_col, community_col)]

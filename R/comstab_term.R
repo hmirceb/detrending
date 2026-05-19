@@ -173,6 +173,7 @@ comstab_internal <- function(x,
 #' 
 #' # Decompose CV into stability components
 #' comstab_term(x = comm_df$sim_data, time_col = "time")
+#' @export
 comstab_term <- function(x, 
                           term = "var",
                           community_col = "comm",
@@ -192,7 +193,7 @@ comstab_term <- function(x,
   # apply comstab to each community
   comstab <- lapply(c_list, FUN = function(y){
     # remove community column
-    x <- x[,!colnames(x) %in% community_col]
+    y <- y[,!colnames(y) %in% community_col]
     # apply comstab
     comstab <- comstab_internal(x = y,
                             term = term,
@@ -202,12 +203,12 @@ comstab_term <- function(x,
   )
   
   # join and add community id
-  comstab_df <- do.call("rbind", lapply(comstab, as.data.frame))
-  comstab_df <- cbind(comm = unique(x$comm), comstab_df)
-  colnames(comstab_df)[1] <- community_col
-  rownames(comstab_df) <- NULL
-  
-  print(comstab_df)
+  # comstab_df <- do.call("rbind", lapply(comstab, as.data.frame))
+  # comstab_df <- cbind(comm = unique(x$comm), comstab_df)
+  # colnames(comstab_df)[1] <- community_col
+  # rownames(comstab_df) <- NULL
+  # 
+  # print(comstab_df)
   
   # set class for plot and print methods
   class(comstab) <- c("comstab", "comstab_list")
@@ -215,7 +216,7 @@ comstab_term <- function(x,
 }
 
 #' @export
-print.comstab <- function(x){
+print.comstab <- function(x, ...){
   
   prt_comstab <- function(y){
     cat("\nPartitionning of the community temporal variability (CV)")
@@ -249,33 +250,40 @@ print.comstab <- function(x){
 }
 
 #' @export
-as.data.frame.comstab <- function(x, ...) {
-  d <- data.frame(CVc = x$CVs[4], 
-             CVe = x$CVs[1],
-             CVtilde = x$CVs[2],
-             CVa = x$CVs[3],
-             tau = x$Stabilization["tau"],
-             delta = x$Stabilization["Delta"],
-             psi = x$Stabilization["Psi"],
-             omega = x$Stabilization["omega"],
-             delta_rel = x$Relative["Delta_cont"],
-             psi_rel = x$Relative["Psi_cont"],
-             omega_rel = x$Relative["omega_cont"])
-  rownames(d) <- NULL
-  return(d)
+as.data.frame.comstab <- function(x, ...){
+  # define auxiliary internal function
+  comstab_to_df <- function(x) {
+    d <- data.frame(CVc = x$CVs[4], 
+                    CVe = x$CVs[1],
+                    CVtilde = x$CVs[2],
+                    CVa = x$CVs[3],
+                    tau = x$Stabilization["tau"],
+                    delta = x$Stabilization["Delta"],
+                    psi = x$Stabilization["Psi"],
+                    omega = x$Stabilization["omega"],
+                    delta_rel = x$Relative["Delta_cont"],
+                    psi_rel = x$Relative["Psi_cont"],
+                    omega_rel = x$Relative["omega_cont"])
+    rownames(d) <- NULL
+    return(d)
+  }
+  
+  # apply based on class
+  if (inherits(x, "comstab_list")) {
+    dat <- do.call("rbind", lapply(x, comstab_to_df))
+  } else {
+    dat <- comstab_to_df(x)
+  }
+  dat <- cbind(comm = rownames(dat), dat)
+  rownames(dat) <- NULL
+  return(dat)
 }
-
-##### REVISAR TERNARY PLTOS PORQUE LOS EJES VAN AL REVES
 
 #' @export
 plot.comstab <- function(x, y = NULL, change = TRUE, relative = TRUE, ...) {
   
-  # as data frome based on class
-  if (inherits(x, "comstab_list")) {
-    dat <- do.call("rbind", lapply(x, as.data.frame))
-  } else {
-    dat <- as.data.frame(x)
-  }
+  # as data frame based on class
+  dat <- as.data.frame(x)
   
   # pot functions
   # cv
@@ -284,37 +292,52 @@ plot.comstab <- function(x, y = NULL, change = TRUE, relative = TRUE, ...) {
     plot(x = 1:4, y = NULL, type = "n", xaxt = "n", xlab = NA, ylab = NA,
          xlim = c(1, 4), ylim = c(0.9 * min(cc), 1.1 * max(cc)))
     for (i in seq_len(nrow(cc))) {
-      lines(x = 1:4, y = cc[i, ], type = "b", col = i, pch = 19, cex = 1.5)
+      graphics::lines(x = 1:4, y = cc[i, ], type = "b", col = i, pch = 19, cex = 1.5)
     }
-    axis(side = 1, at = 1:4,
+    graphics::axis(side = 1, at = 1:4,
          labels = c(expression(CV[e]), expression(widetilde(CV)),
                     expression(CV[a]), expression(CV[com])))
-    mtext(text = c("Dominance", "Asynchrony", "Averaging"),
+    graphics::mtext(text = c("Dominance", "Asynchrony", "Averaging"),
           side = 1, at = 1.5:3.5, line = -1.1, cex = 1)
   }
   # relative effects
   plot_ternary <- function(dat) {
     isopleuros::ternary_plot(
-      x = dat$delta_rel, xlab = "Dominance",
-      y = dat$psi_rel,   ylab = "Asynchrony",
-      z = dat$omega_rel, zlab = "Averaging",
+      ann = FALSE,
+      x = dat$delta_rel,
+      y = dat$psi_rel,
+      z = dat$omega_rel,
       panel.first = isopleuros::ternary_grid(),
-      pch = 19, col = seq_len(nrow(dat))
+      pch = 19, 
+      col = seq_len(nrow(dat))
     )
+    # change axis names and matching colors
+    isopleuros::ternary_axis(side = 1, col = "#BB5566")
+    isopleuros::ternary_title(xlab = "Dominance",  col.lab = "#BB5566")
+    isopleuros::ternary_axis(side = 2, col = "#004488")
+    isopleuros::ternary_title(ylab = "Asynchrony", col.lab = "#004488")
+    isopleuros::ternary_axis(side = 3, col = "#DDAA33")
+    isopleuros::ternary_title(zlab = "Averaging",  col.lab = "#DDAA33")
   }
   
   # set layout and plot
+  graphics::par(xpd = NA) # allow plotting outside area for axis names
   if ( isTRUE(change) && isTRUE(relative) ) {
+    # two columns
     graphics::layout(matrix(c(1, 2), nrow = 1, ncol = 2))
-    plot_cv(dat)
-    plot_ternary(dat)
-  } else if ( isTRUE(change) ) {
-    graphics::layout(matrix(1, nrow = 1, ncol = 1))
-    plot_cv(dat)
-  } else {
-    graphics::layout(matrix(1, nrow = 1, ncol = 1))
-    plot_ternary(dat)
     
+    plot_cv(dat)
+    plot_ternary(dat)
+  } else {
+    # one column
+    graphics::layout(matrix(1, nrow = 1, ncol = 1))
+    
+    if ( isTRUE(change) ) {
+    plot_cv(dat) 
+      } else {
+    plot_ternary(dat)
+    }
   }
+  # reset graphics
   graphics::par(mfrow = c(1, 1), xpd = FALSE, mar = c(5.1, 4.1, 4.1, 2.1))
 }

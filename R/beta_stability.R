@@ -154,26 +154,28 @@ var_t2mv <- function(x, method = c("euclidean", "chord")){
 #' cv_mv(x = comm_df, method = "euclidean", term = "two") # 0.961
 #' @export
 cv_mv <- function(x, method = c("euclidean", "chord"), term = c("var", "two")) {
+  method <- match.arg(method)
+  term   <- match.arg(term)
+  
   # Match variance function
   var_func <- switch(
-    match.arg(term),
+    term,
     var = var_mv,
     two = var_t2mv
   )
   
   # Estimate MV variance
   vv <- var_func(x = x, 
-                 method = match.arg(method))
+                 method = method)
   # Average composition
   mean_vec <- colMeans(x)
   
   # Sample norm of average composition
   SN <- sqrt(sum(mean_vec^2))
   # CVmv
-  if (method == "chord") {
-    CVmv <- sqrt(vv)
-  } else {
-    CVmv <- sqrt(vv) / SN
-  }
+  CVmv <- switch(method,
+                 chord     = sqrt(vv),
+                 euclidean = sqrt(vv) / SN
+  )
   return(CVmv)
 }
