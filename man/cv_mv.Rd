@@ -16,7 +16,7 @@ cv_mv(
 
 \item{time_col}{Character. Name of the column with time variable. Optional with default "time".}
 
-\item{method}{Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.}
+\item{method}{Character. Community dissimilarity metric to use. One of "euclidean" or "chord". Default "euclidean".}
 
 \item{term}{Character. Term to estimate the variance. One of "var" (for standard variance) "two" for Hill's two term local quadrat variance. Default "var".}
 }

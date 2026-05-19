@@ -33,6 +33,10 @@ community_stability(
 \item{synchrony}{Boolean. Estimate synchrony metrics. Default TRUE.}
 
 \item{index}{Character. Synchrony index to calculate. One of "psi", (Segrestin \emph{et al.} 2024), "phi" (Loreau & Mazancourt 2008), "eta" (Gross \emph{et al.} 2014) or "logvar" (Leps \emph{et al.} 2018).}
+
+\item{composition}{Boolean. Estimate stability of community composition. Default FALSE.}
+
+\item{method}{Character. Dissimilarity metric to use for estimating stability of community composition. One of "euclidean" or "chord". Default "euclidean".}
 }
 \value{
 A data frame with the selected metrics for each community, their value, the variance term used to estimate them and whether weighting was used.

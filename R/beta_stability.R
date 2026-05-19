@@ -37,7 +37,7 @@ chord_transform <- function(x) {
 #' Multivariate variance of community composition
 #'
 #' @param x A community abundance matrix.
-#' @param method Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
+#' @param method Character. Community dissimilarity metric to use. One of "euclidean" or "chord". Default "euclidean".
 #'
 #' @details
 #' The multivariate variance of community composition is defined as the average square Euclidean distance between annual observations (\eqn{X_{i}}) and the average community composition (\eqn{\overline{X}}) following: 
@@ -83,7 +83,7 @@ var_mv <- function(x, method = c("euclidean", "chord")){
 #' Multivariate two term local quadratic variance of community composition
 #'
 #' @param x A community abundance matrix.
-#' @param method Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
+#' @param method Character. Community dissimilarity metric to use. One of "euclidean" or "chord". Default "euclidean".
 #'
 #' @details
 #' The multivariate two term local quadratic variance (\eqn{TTLQV_{mv2}}) of community composition is the detrended version of multivariate variance (\eqn{var_{mv}}): 
@@ -126,7 +126,7 @@ var_t2mv <- function(x, method = c("euclidean", "chord")){
 #' Multivariate coefficient of variation
 #'
 #' @param x A community abundance matrix.
-#' @param method Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.
+#' @param method Character. Community dissimilarity metric to use. One of "euclidean" or "chord". Default "euclidean".
 #' @param term Character. Term to estimate the variance. One of "var" (for standard variance) "two" for Hill's two term local quadrat variance. Default "var".
 #' @param time_col Character. Name of the column with time variable. Optional with default "time".
 #'

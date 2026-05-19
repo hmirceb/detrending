@@ -9,7 +9,7 @@ var_t2mv(x, method = c("euclidean", "chord"))
 \arguments{
 \item{x}{A community abundance matrix.}
 
-\item{method}{Character. Community dissimilarity metric to use. One of 'euclidean' or 'chord'. Default 'euclidean'.}
+\item{method}{Character. Community dissimilarity metric to use. One of "euclidean" or "chord". Default "euclidean".}
 }
 \value{
 A numeric value. The multivariate two term quadratic variance of the community.
