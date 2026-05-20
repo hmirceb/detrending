@@ -320,6 +320,12 @@ plot.comstab <- function(x, y = NULL, change = TRUE, relative = TRUE, ...) {
     isopleuros::ternary_title(zlab = "Averaging",  col.lab = "#DDAA33")
   }
   
+  # warn if relative effects not available and avoid plotting them
+  if ( nrow(dat) == 1 & any(is.na(dat$delta_rel)) ){
+    relative <- FALSE
+    warning("Relative effects could not computed and cannot be plotted.")
+  }
+  
   # set layout and plot
   graphics::par(xpd = NA) # allow plotting outside area for axis names
   if ( isTRUE(change) && isTRUE(relative) ) {
