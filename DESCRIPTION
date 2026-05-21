@@ -17,7 +17,6 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
   faux,
-  gtools,
   graphics,
   vegan,
   isopleuros

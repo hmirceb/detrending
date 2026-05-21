@@ -296,21 +296,22 @@ plot.comstab <- function(x, y = NULL, change = TRUE, relative = TRUE, ...) {
       graphics::lines(x = 1:4, y = cc[i, ], type = "b", col = i, pch = 19, cex = 1.5)
     }
     graphics::axis(side = 1, at = 1:4,
-         labels = c(expression(CV[e]), expression(widetilde(CV)),
-                    expression(CV[a]), expression(CV[com])))
+                   labels = c(expression(CV[e]), expression(widetilde(CV)),
+                              expression(CV[a]), expression(CV[com])))
     graphics::mtext(text = c("Dominance", "Asynchrony", "Averaging"),
-          side = 1, at = 1.5:3.5, line = -1.1, cex = 1)
+                    side = 1, at = 1.5:3.5, line = -1.1, cex = 1)
   }
   # relative effects
   plot_ternary <- function(dat) {
-    isopleuros::ternary_plot(
-      ann = FALSE,
-      x = dat$delta_rel,
-      y = dat$psi_rel,
-      z = dat$omega_rel,
-      panel.first = isopleuros::ternary_grid(),
-      pch = 19, 
-      col = seq_len(nrow(dat))
+    # set colors (skip if no relative effects to match other plot)
+    colors <- seq_len(nrow(dat)) * (dat$delta_rel / dat$delta_rel)
+    colors <- colors[!is.na(colors)]
+    # empty plot
+    isopleuros::ternary_plot(NULL,
+                             ann = FALSE,
+                             axes = FALSE,
+                             panel.first = isopleuros::ternary_grid(),
+                             
     )
     # change axis names and matching colors
     isopleuros::ternary_axis(side = 1, col = "#BB5566")
@@ -319,10 +320,22 @@ plot.comstab <- function(x, y = NULL, change = TRUE, relative = TRUE, ...) {
     isopleuros::ternary_title(ylab = "Asynchrony", col.lab = "#004488")
     isopleuros::ternary_axis(side = 3, col = "#DDAA33")
     isopleuros::ternary_title(zlab = "Averaging",  col.lab = "#DDAA33")
+    # draw points
+    isopleuros::ternary_points(
+      x = dat$delta_rel,
+      y = dat$psi_rel,
+      z = dat$omega_rel,
+      pch = 19, 
+      col = colors
+    )
   }
   
   # warn if relative effects not available and avoid plotting them
   if ( nrow(dat) == 1 & any(is.na(dat$delta_rel)) ){
+    relative <- FALSE
+    warning("Relative effects for some communities could not computed and were not plotted.")
+  }
+  if ( nrow(dat) > 1 & all(is.na(dat$delta_rel)) ){
     relative <- FALSE
     warning("Relative effects could not computed and cannot be plotted.")
   }
@@ -340,9 +353,9 @@ plot.comstab <- function(x, y = NULL, change = TRUE, relative = TRUE, ...) {
     graphics::layout(matrix(1, nrow = 1, ncol = 1))
     
     if ( isTRUE(change) ) {
-    plot_cv(dat) 
-      } else {
-    plot_ternary(dat)
+      plot_cv(dat) 
+    } else {
+      plot_ternary(dat)
     }
   }
   # reset graphics

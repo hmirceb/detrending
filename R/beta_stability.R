@@ -28,7 +28,7 @@
 #' comm_df <- metacomm_df[metacomm_df$comm == 1,][,-c(1:2)] # Select only community 1
 #' # Transform
 #' chord_transform(x = comm_df)
-#' @export
+#' @noRd
 chord_transform <- function(x) {
   c_t <- x / sqrt(rowSums(x^2))
   return(c_t)

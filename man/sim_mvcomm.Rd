@@ -11,7 +11,7 @@ sim_mvcomm(
   power = 1.8,
   bound_pos = TRUE,
   corr = 0,
-  even = 0.8,
+  even = 0.5,
   trend_mean = 0,
   trend_sd = 0.01,
   bimodal_trend = FALSE,
@@ -31,7 +31,7 @@ sim_mvcomm(
 
 \item{corr}{Numeric. Average correlation between populations.}
 
-\item{even}{Numeric. Dispersion parameter for a Dirichlet distribution. Controls the evenness of the community with higher values indicating more even communities.}
+\item{even}{Numeric. The relative abundance (between 0 and 1) of the most abundant species. Controls the evenness of the community with lower values indicating more even communities. Alternatively, a vector of relative abundaces of length = n_sp.}
 
 \item{trend_mean}{Numeric. Mean of the trend. Positive values indicate growth and negative ones, decline. Default 0 (no trend).}
 
@@ -39,7 +39,7 @@ sim_mvcomm(
 
 \item{bimodal_trend}{Boolean. If TRUE half of the species have negative trends and half positive. Default FALSE.}
 
-\item{offset}{Boolean. Add a small offset (1\% of the average species abundance) to avoid 0. Default TRUE.}
+\item{offset}{Boolean. Add a small offset to all species (1\% of the average species abundance) to avoid 0s in the simulated dataset. Default TRUE.}
 }
 \value{
 A named list with three elements:

@@ -7,7 +7,7 @@
 sim_comm(
   years = 25,
   n_sp = 10,
-  max_rel_abu = 0.6,
+  even = 0.6,
   tot_abu = 300,
   power = 1.8,
   mean_env_resp = 0,
@@ -25,7 +25,7 @@ sim_comm(
 
 \item{n_sp}{Numeric. Number of species in the community.}
 
-\item{max_rel_abu}{Numeric. Maximum relative abundance for the species in the community.}
+\item{even}{Numeric. Maximum relative abundance for the species in the community.}
 
 \item{tot_abu}{Numeric. Total abundance of the community, representing e.g. the number of
 individuals or the total amount of biomass.}
