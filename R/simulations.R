@@ -106,12 +106,10 @@ sim_mvcomm <- function(n_sp = 10,
                          years = years,
                          tot_abu = tot_abu,
                          power = power,
-                         bound_pos = bound_pos,
                          corr = corr,
                          even = even,
                          trend_mean = unique(trend_mean),
-                         trend_sd = unique(trend_sd),
-                         bimodal_trend = bimodal_trend))
+                         trend_sd = unique(trend_sd)))
   
   return(res)
 }

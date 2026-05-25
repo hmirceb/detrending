@@ -50,8 +50,8 @@ community_info(x = clean_example, total = "average")
 ### Data simulation
 We can easily simulate a time series of species abundance for a community of a desired number of species, time steps, relation between mean and variance according to a Taylor's Power Law (TPL), evenness of the community, and average correlation between species.
 ```{r simulation, fig.height=4, fig.width=7}
-sim_df <- sim_mvcomm(p = 5)
-sim_df2 <- sim_mvcomm(p = 0.8)
+sim_df <- sim_mvcomm()
+sim_df2 <- sim_mvcomm()
 
 par(mfrow = c(1,2))
 plot_com(sim_df$sim_data)
@@ -63,11 +63,11 @@ par(mfrow = c(1,1))
 We can also estimate linear trends in species abundance and test their statistical significance.
 ```{r trends, fig.height=4, fig.width=7}
 # Simulate data without strong trends
-sim_data_notrend <- sim_mvcomm(p = 0.8, trend_mean = 0)$sim_data
+sim_data_notrend <- sim_mvcomm(trend_mean = 0)$sim_data
 community_trends(x = sim_data_notrend, method = "loglinear", plot = T)
 
 # Simulate data with some postitive and negative trends
-sim_data_trend <- sim_mvcomm(p = 0.8, trend_mean = 0.4)$sim_data
+sim_data_trend <- sim_mvcomm(trend_mean = 0.4)$sim_data
 community_trends(x = sim_data_trend, method = "loglinear", plot = T)
 ```
 
@@ -124,6 +124,7 @@ plot(x = 1:4, y = classic_sync,
      ylab = "Value",
      xlab = "Synchrony metric",
      ylim = c(min(c(classic_sync, det_sync)), max(c(classic_sync, det_sync))))
+abline(h = 0, lty = 2)
 points(x = 1:4, y = det_sync,
        col = 4,
        pch = 19)

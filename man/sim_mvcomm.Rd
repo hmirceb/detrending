@@ -9,13 +9,10 @@ sim_mvcomm(
   years = 25,
   tot_abu = 200 * n_sp,
   power = 1.8,
-  bound_pos = TRUE,
   corr = 0,
   even = 0.5,
   trend_mean = 0,
-  trend_sd = 0.01,
-  bimodal_trend = FALSE,
-  offset = TRUE
+  trend_sd = 0.01
 )
 }
 \arguments{
@@ -27,19 +24,13 @@ sim_mvcomm(
 
 \item{power}{Numeric. Exponent of the Taylor's Power Law to estimate variance from mean abundance.}
 
-\item{bound_pos}{Boolean. Bound abundance values to be positive. Default TRUE.}
-
 \item{corr}{Numeric. Average correlation between populations.}
 
 \item{even}{Numeric. The relative abundance (between 0 and 1) of the most abundant species. Controls the evenness of the community with lower values indicating more even communities. Alternatively, a vector of relative abundaces of length = n_sp.}
 
-\item{trend_mean}{Numeric. Mean of the trend. Positive values indicate growth and negative ones, decline. Default 0 (no trend).}
+\item{trend_mean}{Numeric. Mean of the trend. Can be a single value (for a shared trend across species) or a vector of length = \code{n_sp} (for individual trends). Positive values indicate growth and negative ones, decline. Default 0 (no trend).}
 
-\item{trend_sd}{Numeric. Standard deviation of the trend.}
-
-\item{bimodal_trend}{Boolean. If TRUE half of the species have negative trends and half positive. Default FALSE.}
-
-\item{offset}{Boolean. Add a small offset to all species (1\% of the average species abundance) to avoid 0s in the simulated dataset. Default TRUE.}
+\item{trend_sd}{Numeric. Standard deviation of the trend. Can be a single value or a vector of the same length as \code{trend_mean}.}
 }
 \value{
 A named list with three elements:
