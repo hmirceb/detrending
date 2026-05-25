@@ -133,7 +133,7 @@ trend_loglinear  <- function(x, time = NULL){
 #' require(detrending)
 #' 
 #' # Simulate community data with trends
-#' comm_df <- sim_mvcomm(trend_mean = 0.3, bimodal_trend = TRUE)
+#' comm_df <- sim_mvcomm(trend_mean = 0.3)
 #' 
 #' # Estimate multivariate community trend
 #' trend_mv(comm_df$sim_data, time_col = "time")
@@ -181,7 +181,7 @@ trend_mv <- function(x, time_col = "time", community_col = "comm", scale = TRUE,
 #' require(detrending)
 #' 
 #' # Simulate community data with trends
-#' comm_df <- sim_mvcomm(trend_mean = 0.3, bimodal_trend = TRUE)
+#' comm_df <- sim_mvcomm(trend_mean = 0.3)
 #' 
 #' # Estimate trend for each species and plot them
 #' community_trends(comm_df$sim_data, method = "loglinear", plot = TRUE)

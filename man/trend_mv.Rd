@@ -41,7 +41,7 @@ This function estimates temporal trends in abundance at the community level by c
 require(detrending)
 
 # Simulate community data with trends
-comm_df <- sim_mvcomm(trend_mean = 0.3, bimodal_trend = TRUE)
+comm_df <- sim_mvcomm(trend_mean = 0.3)
 
 # Estimate multivariate community trend
 trend_mv(comm_df$sim_data, time_col = "time")

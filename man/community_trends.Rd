@@ -36,7 +36,7 @@ Estimate population trends in a community
 require(detrending)
 
 # Simulate community data with trends
-comm_df <- sim_mvcomm(trend_mean = 0.3, bimodal_trend = TRUE)
+comm_df <- sim_mvcomm(trend_mean = 0.3)
 
 # Estimate trend for each species and plot them
 community_trends(comm_df$sim_data, method = "loglinear", plot = TRUE)
