@@ -316,11 +316,11 @@ plot.comstab <- function(x, y = NULL, change = TRUE, relative = TRUE, ...) {
                              
     )
     # change axis names and matching colors
-    isopleuros::ternary_axis(side = 1, col = "#BB5566", at = seq(0, 1, 0.1))
+    isopleuros::ternary_axis(side = 1, col = "#BB5566", at = seq(0.1, 0.9, 0.1))
     isopleuros::ternary_title(xlab = "Dominance",  col.lab = "#BB5566")
-    isopleuros::ternary_axis(side = 2, col = "#004488", at = seq(0, 1, 0.1))
+    isopleuros::ternary_axis(side = 2, col = "#004488", at = seq(0.1, 0.9, 0.1))
     isopleuros::ternary_title(ylab = "Asynchrony", col.lab = "#004488")
-    isopleuros::ternary_axis(side = 3, col = "#DDAA33", at = seq(0, 1, 0.1))
+    isopleuros::ternary_axis(side = 3, col = "#DDAA33", at = seq(0.1, 0.9, 0.1))
     isopleuros::ternary_title(zlab = "Averaging",  col.lab = "#DDAA33")
     # draw points
     isopleuros::ternary_points(
