@@ -78,7 +78,7 @@ comstab_internal <- function(x,
   # Calculate TPL between CVs and means. 
   # This is equivalent to estimating TPL for variances and means, estimating the variance of the average species using TPL and average mean and then estimating CVe with that variance
   TPL <- tpl(vari = CVi[CV0],  meani = meani[CV0]) # LM of CVs and means on log scale
-  CVe <- 10^TPL["alpha"] * (mean(x)^TPL["beta"]) # Predict CVe from mean abundance and TPL coefficients (backtransformed from log scale)
+  CVe <- 10^TPL["alpha"] * (meansum/n)^TPL["beta"] # Predict CVe from mean abundance and TPL coefficients (backtransformed from log scale)
 
   # Test correlation between individual CVs and mean abundances (if there are more than 5 species with variation)
   if (sum(CV0) > 5) {
