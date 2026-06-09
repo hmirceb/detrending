@@ -225,6 +225,49 @@ logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
   return(sync)
 }
 
+
+#' Detrended variance ratio synchrony index based on residuals from linear regression 
+#' 
+#' This function fits linear regression models to each species in the community. Then it estimaes the synchrony of the community using the variance ratio of the observed values, the fitted values from the regression and their residuals.
+#' 
+#' @param x A data.frame. A community matrix of species abundance with years as rows and species as columns. 
+#' @param time_col Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.
+#' @returns A named vector of numeric values with the synchrony of the community whole community, the fitted values and their residuals.
+#' 
+#' @references
+#' - Lepš, J., Götzenberger, L., Valencia, E. & de Bello, F. (2019). Accounting for long-term directional trends on year-to-year synchrony in species fluctuations. Ecography, 42, 1728-1741.
+#' 
+#' @examples
+#' require(detrending)
+#' 
+#' # Simulate community data
+#' comm_df <- sim_mvcomm()
+#' sumsq_ratio(x = comm_df$sim_data)
+#' @export
+sumsq_ratio <- function(x, time_col = "time") {
+  
+  # Check if a time column was specified for detrending methods
+  x <- check_time(x = x, time_col = time_col, term = "two", rm = TRUE)
+  
+  # Set NAs as 0 and remove species with 0 abundance
+  x <- remove_empty_sps(x = x, time_col = time_col)
+  
+  # Variance of sum of abundances
+  var_com <- var_linear(rowSums(x))
+  # Sum of individual variances of fitted values and residuals
+  var_fitres <- rowSums(apply(dat, 2, var_linear))
+  # Sum of individual variances 
+  var_sps <- sum(apply(x, 2, var)) 
+  
+  # Compute ratio
+  v_ratio <- (var_com-var_fitres)/var_sps
+  
+  # Include total synchrony
+  sync <- c(sum(v_ratio), v_ratio)
+  names(sync) <- c("sync_total", "sync_fitted", "sync_det")
+  return(sync)
+}
+
 #' Compute community synchrony
 #' 
 #' `sync_term()` estimates one or several community synchrony indices (see Details) using standard estimates of variance as well as its detrended versions using Hill's two and three term local quadratic variance estimates.
@@ -232,11 +275,12 @@ logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
 #' @param x A data.frame. A community matrix of species abundance with years as rows and species as columns. 
 #' @param index Character. Synchrony index to calculate. One of "psi", (Segrestin *et al.* 2024), "phi" (Loreau & Mazancourt 2008), "eta" (Gross *et al.* 2014) or "logvar" (Leps *et al.* 2018). 
 #' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
+#' @param linear Boolean. Decompose synchrony into its trend and non-trend components using linear regression. Default FALSE. 
 #' @param time_col Character. Name of the column with time variable. Optional, if not provided the function assumes that rows are in order  by default.
 #' @param weighted Boolean. Weight the contribution of each species to Gross *et al.*'s \eqn{\eta} index by its average abundance in the community following Blüthgen *et al.* (2016). Default FALSE.
 #'
 #' @details
-#' There are four synchrony indices available:
+#' There are five synchrony indices available:
 #'
 #' - Segrestin *et al.*'s (2024) \eqn{\psi}: 
 #' \deqn{\psi = \sqrt{ \phi } ^ \alpha = \left( \dfrac{ \sigma_{x_{T}} }{ \sum_{i=1}^{S}{\sigma_{x_{i}}} } \right) ^ \alpha } 
@@ -254,7 +298,15 @@ logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
 #' - Lepš *et al.* (2018) *logvar* ratio:
 #' \deqn{logvar = \log_{10} \left( \dfrac{ var(\sum_{i=1}^{S}{x_{i}}) }{ \sum_{i=1}^{S}{var(x_{i})} } \right)}
 #' 
-#' Where \eqn{\sigma_{x}} is the standard deviation of a vector of abundances \eqn{x}, \eqn{S} is the number of species in the community, \eqn{x_{i}} is the abundance of species \eqn{i} across time steps, \eqn{x_{T}} is the sum of species abundances for each time step and \eqn{p_{i}} the average relative abundance of species \eqn{i}.
+#' - Lepš *et al.* (2019) variance ratio of residuals from linear regression:
+#' \deqn{Stotal = Strend + Sdetrended = Sfitted + Sresiduals}
+#' \deqn{Stotal = \dfrac{ var\left( \sum_{i=1}^{S}{x_{i}} \right) - \sum_{i=1}^{S}{var(x_{i})}}{ \sum_{i=1}^{S}{var(x_{i})} }} 
+#' \deqn{Stotal = \dfrac{ var\left( \sum_{i=1}^{S}{fitted_{i}} \right) - \sum_{i=1}^{S}{var(fitted_{i})}}{ \sum_{i=1}^{S}{var(fitted_{i})} } + \dfrac{ var\left( \sum_{i=1}^{S}{residual_{i}} \right) - \sum_{i=1}^{S}{var(residual_{i})}}{ \sum_{i=1}^{S}{var(residual_{i})} }}
+#' 
+#' And:
+#' \deqn{ logvar = \ln (1+Stotal) }
+#' 
+#' Where \eqn{\sigma_{x}} is the standard deviation of a vector of abundances \eqn{x}, \eqn{S} is the number of species in the community, \eqn{x_{i}} is the abundance of species \eqn{i} across time steps, \eqn{x_{T}} is the sum of species abundances for each time step and \eqn{p_{i}} the average relative abundance of species \eqn{i}. For `Stotal`, \eqn{fitted_{i}} and \eqn{residual_{i}} correspond, respectively, to the fitted and residual values of a linear regression between abundances and time. 
 #' 
 #' @returns A named vector of length equal to the number of indices calculated.
 #'
@@ -264,6 +316,7 @@ logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
 #' - Gross, K., Cardinale, B. J., Fox, J. W., Gonzalez, A., Loreau, M., Wayne Polley, H., ... & van Ruijven, J. (2014). Species richness and the temporal stability of biomass production: a new analysis of recent biodiversity experiments. The American Naturalist, 183(1), 1-12.
 #' - Blüthgen, N., Simons, N. K., Jung, K., Prati, D., Renner, S. C., Boch, S., ... & Gossner, M. M. (2016). Land use imperils plant and animal community stability through changes in asynchrony rather than diversity. Nature Communications, 7(1), 10697.
 #' - Lepš, J., Májeková, M., Vítová, A., Doležal, J., & de Bello, F. (2018). Stabilizing effects in temporal fluctuations: Management, traits, and species richness in high‐diversity communities. Ecology, 99(2), 360-371.
+#' - Lepš, J., Götzenberger, L., Valencia, E. & de Bello, F. (2019). Accounting for long-term directional trends on year-to-year synchrony in species fluctuations. Ecography, 42, 1728-1741.
 #' 
 #' @examples
 #' require(detrending)
@@ -274,7 +327,8 @@ logvar_ratio <- function(x, term = "var", time_col = "time", log = TRUE) {
 #' @export
 sync_term <- function(x,
                       index = c("psi", "phi", "eta", "logvar"),  
-                      term = "var", 
+                      term = "var",
+                      linear = FALSE,
                       time_col = "time", 
                       weighted = FALSE) {
   
@@ -312,6 +366,12 @@ sync_term <- function(x,
     names(sync) <- gsub("eta", "etaw", names(sync))
   }
   names(sync) <- paste(sep = "_", names(sync), term)
+  
+  # estimate linear synchrony decomposition
+  if( isTRUE(linear) ){
+    linear_sync <- sumsq_ratio(x, time_col = time_col)
+    sync <- c(sync, linear_sync)
+  }
   
   return(sync)
 }

@@ -85,7 +85,10 @@ var_linear <- function(x) {
   y <- 1:length(x)
   mod <- stats::lm(x ~ y)
   det_x <- stats::resid(mod)
-  return( stats::var(det_x) )
+  fit_x <- stats::fitted(mod)
+  result <- c(stats::var(fit_x), stats::var(det_x))
+  names(result) <- c("var_fitted", "var_detrended")
+  return( result )
 }
 
 #' Covariance between two variables using variance or Hill's 2 and 3 term variance
