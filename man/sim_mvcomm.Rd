@@ -26,7 +26,7 @@ sim_mvcomm(
 
 \item{corr}{Numeric. Average correlation between populations.}
 
-\item{even}{Numeric. The relative abundance (between 0 and 1) of the most abundant species. Controls the evenness of the community with lower values indicating more even communities. Alternatively, a vector of relative abundaces of length = n_sp.}
+\item{even}{Numeric. Evenness of the community, a value between 0 and 1 with higher values indicating more even communities. Alternatively, a vector of relative abundaces of length = n_sp.}
 
 \item{trend_mean}{Numeric. Mean of the trend. Can be a single value (for a shared trend across species) or a vector of length = \code{n_sp} (for individual trends). Positive values indicate growth and negative ones, decline. Default 0 (no trend).}
 

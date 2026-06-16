@@ -5,7 +5,7 @@
 #' @param tot_abu Numeric. Total abundance of the community.
 #' @param power Numeric. Exponent of the Taylor's Power Law to estimate variance from mean abundance.
 #' @param corr Numeric. Average correlation between populations.
-#' @param even Numeric. The relative abundance (between 0 and 1) of the most abundant species. Controls the evenness of the community with lower values indicating more even communities. Alternatively, a vector of relative abundaces of length = n_sp.
+#' @param even Numeric. Evenness of the community, a value between 0 and 1 with higher values indicating more even communities. Alternatively, a vector of relative abundaces of length = n_sp.
 #' @param trend_mean Numeric. Mean of the trend. Can be a single value (for a shared trend across species) or a vector of length = `n_sp` (for individual trends). Positive values indicate growth and negative ones, decline. Default 0 (no trend).
 #' @param trend_sd Numeric. Standard deviation of the trend. Can be a single value or a vector of the same length as `trend_mean`.
 #' 
@@ -40,6 +40,7 @@ sim_mvcomm <- function(n_sp = 10,
   # check evenness values
   if (length(even) == 1) {
     even <- ifelse(even == 0, even + 0.01, even) # values == 0 give error
+    even <- 1-even
     mean_abu <- sort(
       tot_abu * geom_seq(max_rel_abu = even, n_sp = n_sp),
       decreasing = TRUE
@@ -63,7 +64,8 @@ sim_mvcomm <- function(n_sp = 10,
     trend_resp <- stats::rnorm(n = n_sp, mean = trend_mean, sd = trend_sd)
   } else {
     if (length(trend_mean) != length(trend_sd)) {
-      stop("Lengths of vectors of means and SD differ.")
+      warning(paste0("Lengths of vectors of means and SD differ. Using SD = ", trend_sd[1], " for all species."))
+      trend_sd <- rep(trend_sd[1], times = n_sp)
     }
     trend_resp <- sapply(seq_along(trend_mean), FUN = function(z) {
       stats::rnorm(n = 1, mean = trend_mean[z], sd = trend_sd[z])
