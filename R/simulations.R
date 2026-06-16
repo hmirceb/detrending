@@ -10,7 +10,9 @@
 #' @param trend_sd Numeric. Standard deviation of the trend. Can be a single value or a vector of the same length as `trend_mean`.
 #' 
 #' @returns A named list with three elements:
-#' - `sim_data`: A data.frame with the simulated data, species in columns and time steps in rows.
+#' - `sim_data`: A data.frame with the simulated data including any possible trends. Species in columns and time steps in rows.
+#' 
+#' - `baseline`: A data.frame with the simulated data without any trends. Species in columns and time steps in rows.
 #' 
 #' - `true_trend`: A named vector with the true mean trends of each simulated species. 
 #' 
@@ -97,14 +99,19 @@ sim_mvcomm <- function(n_sp = 10,
   off    <- colMeans(simcom) * 0.01
   simcom <- as.data.frame(sweep(x = simcom, MARGIN = 2, STATS = off, FUN = "+"))
   
+  p <- matrix(trend_resp, ncol = n_sp, nrow = years, byrow = T)
+  p <- sweep(p, 1, seq_len(years), "*")
+  baseline <- simcom / exp(p)
+  
   # Set species names
   colnames(simcom) <- paste(sep = "_", "sp", seq_len(n_sp))
+  colnames(baseline) <- paste(sep = "_", "sp", seq_len(n_sp))
   
   # Results into list
   res <- list(
     sim_data = simcom,
+    baseline = baseline,
     true_trend = colMeans(apply(log(simcom), 2, diff)),
-    input_trend = trend_resp,
     params = c(n_sp = n_sp,
                years = years,
                tot_abu = tot_abu,
@@ -114,9 +121,8 @@ sim_mvcomm <- function(n_sp = 10,
                trend_mean = unique(trend_mean),
                trend_sd = unique(trend_sd))
   )
-  
-  return(res)
 }
+
 
 
 #' Simulate community with fluctuations in species abundances across time
