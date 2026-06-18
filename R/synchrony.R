@@ -73,6 +73,9 @@ psi_segrestin <- function(x, term = "var", time_col = "time"){
 #' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
 #' @param time_col Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.
 #' 
+#' @details
+#' \deqn{\phi = \dfrac{ \sigma_{x_{T}}^2 }{ (\sum_{i=1}^{S}{\sigma_{x_{i}}})^2 }}
+#' 
 #' @returns A numeric value.
 #'
 #' @references
@@ -108,12 +111,19 @@ phi_loreau <- function(x, term = "var", time_col = "time") {
 
 #' Eta synchrony index
 #'
-#' This function estimates Gross et al. 2014 synchrony index Eta and its weighted version by Blüthgen et al. 2016 using a detrended version of variances based on Hill's 2 and 3 terms local quadratic variance.
+#' This function estimates Gross et al. (2014) synchrony index Eta and its weighted version by Blüthgen et al. (2016) using a detrended version of variances based on Hill's 2 and 3 terms local quadratic variance.
 #'
 #' @param x A data.frame. A community matrix of species abundance with years as rows and species as columns. 
 #' @param term Character. Term to estimate the variance. One of "var" (for standard variance and covariance), "two" or "three" for Hills' two or three term local quadrat variance and covariance. Default "var".
 #' @param time_col Character. Name of the column with time variable. Optional, by default assumes that rows are in chronological order.
 #' @param weighted Boolean. Weight index by average species relative abundances. Default FALSE.
+#' 
+#' @details
+#' - Gross *et al.*'s (2014) \eqn{\eta}:
+#' \deqn{\eta = \dfrac{ 1 }{ S }\sum_{i=1}^{S}{corr(x_{i},\sum_{j \neq i}^{S}{x_{j})}}}
+#' 
+#' - Blüthgen *et al.*'s (2016) weighted version of \eqn{\eta}, \eqn{\eta_{w}}:
+#' \deqn{\eta_{w} = \sum_{i=1}^{S}{p_{i} corr(x_{i},\sum_{j \neq i}^{S}{x_{j})}}}
 #' 
 #' @returns A numeric value.
 #'

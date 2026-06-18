@@ -19,7 +19,15 @@ eta_gross(x, term = "var", time_col = "time", weighted = FALSE)
 A numeric value.
 }
 \description{
-This function estimates Gross et al. 2014 synchrony index Eta and its weighted version by Blüthgen et al. 2016 using a detrended version of variances based on Hill's 2 and 3 terms local quadratic variance.
+This function estimates Gross et al. (2014) synchrony index Eta and its weighted version by Blüthgen et al. (2016) using a detrended version of variances based on Hill's 2 and 3 terms local quadratic variance.
+}
+\details{
+\itemize{
+\item Gross \emph{et al.}'s (2014) \eqn{\eta}:
+\deqn{\eta = \dfrac{ 1 }{ S }\sum_{i=1}^{S}{corr(x_{i},\sum_{j \neq i}^{S}{x_{j})}}}
+\item Blüthgen \emph{et al.}'s (2016) weighted version of \eqn{\eta}, \eqn{\eta_{w}}:
+\deqn{\eta_{w} = \sum_{i=1}^{S}{p_{i} corr(x_{i},\sum_{j \neq i}^{S}{x_{j})}}}
+}
 }
 \examples{
 require(detrending)

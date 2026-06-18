@@ -19,6 +19,9 @@ A numeric value.
 \description{
 This function estimates Loreau & Mazancourts 2008 Phi synchrony index using standard and detrended versions of variances based on Hill's 2 and 3 terms local quadratic variance.
 }
+\details{
+\deqn{\phi = \dfrac{ \sigma_{x_{T}}^2 }{ (\sum_{i=1}^{S}{\sigma_{x_{i}}})^2 }}
+}
 \examples{
 require(detrending)
 

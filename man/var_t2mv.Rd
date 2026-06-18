@@ -18,9 +18,9 @@ A numeric value. The multivariate two term quadratic variance of the community.
 Multivariate two term local quadratic variance of community composition
 }
 \details{
-The multivariate two term local quadratic variance (\eqn{TTLQV_{mv2}}) of community composition is the detrended version of multivariate variance (\eqn{var_{mv}}):
-\deqn{TTLQV_{mv2} = \dfrac{ \sum_{i=1}^{t-1}{ED(X_{i}, X_{i+1})^2} }{2(t-1)}}
-Where \eqn{X_{i}} is the composition of the community at time \eqn{i} and \eqn{ED(X_{i}, X_{i+1})} the Euclidean distance between succesive time points.
+The multivariate two term local quadratic variance (\eqn{2TLQV_{mv}}) of community composition is the detrended version of multivariate variance (\eqn{var_{mv}}):
+\deqn{2TLQV_{mv} = \dfrac{ \sum_{i=1}^{t-1}{d(X_{i}, X_{i+1})^2} }{2(t-1)}}
+Where \eqn{X_{i}} is the composition of the community at time \eqn{i} and \eqn{d(X_{i}, X_{i+1})} the Euclidean or Chord distance between succesive time steps.
 }
 \examples{
 require(detrending)

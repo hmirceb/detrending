@@ -40,8 +40,8 @@ chord_transform <- function(x) {
 #' @param method Character. Community dissimilarity metric to use. One of "euclidean" or "chord". Default "euclidean".
 #'
 #' @details
-#' The multivariate variance of community composition is defined as the average square Euclidean distance between annual observations (\eqn{X_{i}}) and the average community composition (\eqn{\overline{X}}) following: 
-#' \deqn{var_{mv} = \dfrac{ \sum_{i=1}^{t}{ED(X_{i}, \overline{X})^2} }{t-1}}
+#' The multivariate variance of community composition is defined as the average squared Euclidean or Chord distance (\eqn{d(X_{i}, \overline{X})}) between annual observations (\eqn{X_{i}}) and the average community composition (\eqn{\overline{X}}) following: 
+#' \deqn{var_{mv} = \dfrac{ \sum_{i=1}^{t}{d(X_{i}, \overline{X})^2} }{t-1}}
 #'
 #' @returns A numeric value. The multivariate variance of the community.
 #' 
@@ -86,9 +86,9 @@ var_mv <- function(x, method = c("euclidean", "chord")){
 #' @param method Character. Community dissimilarity metric to use. One of "euclidean" or "chord". Default "euclidean".
 #'
 #' @details
-#' The multivariate two term local quadratic variance (\eqn{TTLQV_{mv2}}) of community composition is the detrended version of multivariate variance (\eqn{var_{mv}}): 
-#' \deqn{TTLQV_{mv2} = \dfrac{ \sum_{i=1}^{t-1}{ED(X_{i}, X_{i+1})^2} }{2(t-1)}}
-#' Where \eqn{X_{i}} is the composition of the community at time \eqn{i} and \eqn{ED(X_{i}, X_{i+1})} the Euclidean distance between succesive time points.
+#' The multivariate two term local quadratic variance (\eqn{2TLQV_{mv}}) of community composition is the detrended version of multivariate variance (\eqn{var_{mv}}): 
+#' \deqn{2TLQV_{mv} = \dfrac{ \sum_{i=1}^{t-1}{d(X_{i}, X_{i+1})^2} }{2(t-1)}}
+#' Where \eqn{X_{i}} is the composition of the community at time \eqn{i} and \eqn{d(X_{i}, X_{i+1})} the Euclidean or Chord distance between succesive time steps.
 #'
 #' @returns A numeric value. The multivariate two term quadratic variance of the community.
 #' 
